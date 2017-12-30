@@ -1,0 +1,17 @@
+NAME
+	|| - logical or
+
+SYNTAX
+	mixed a,b,c;
+	c = a || b;
+
+
+DESCRIPTION
+	If a is false (equal to 0) then b is returned. Otherwise 0 will
+	be returned. Note that if a isn't 0 then the statement b will never
+	be executed.
+
+SEE ALSO
+	or, logical_and, xor
+
+

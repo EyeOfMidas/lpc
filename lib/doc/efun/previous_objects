@@ -1,0 +1,12 @@
+NAME
+	previous_objects - return the calling objects
+
+SYNTAX
+	object *previous_objects();
+
+DESCRIPTION
+	Return an array of objects that called eachother to reach this
+	function.
+
+SEE ALSO
+	call_function, previous_object, initiating_object

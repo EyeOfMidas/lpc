@@ -1,0 +1,12 @@
+NAME
+	mappingp - is the argument a mapping?
+
+SYNTAX
+	int mappingp(mixed arg)
+
+DESCRIPTION
+	Return 1 if the argument 'arg' is a mapping, or 0 if it is not.
+
+SEE ALSO
+    intp, stringp, objectp, pointerp
+    mkmapping, m_indices, m_values, m_delete, m_sizeof

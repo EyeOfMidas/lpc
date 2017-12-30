@@ -1,0 +1,16 @@
+NAME
+	dumpallobj - dump all obj  :)
+
+SYNTAX
+	string dumpallobj();
+
+DESCRIPTION
+	Return a pseudo-readable list of all objects currently cloned in
+	a string. The string will roughly look like the old /OBJ_DUMP
+	file. That is, something like this:
+
+<filename>(<clone_number>) <size> ref <HB> <HASHED> <environment> <cpu>
+	
+BUGS
+	The documentation could be better
+

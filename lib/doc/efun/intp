@@ -1,0 +1,11 @@
+NAME
+	intp - is argument an int?
+
+SYNTAX
+	int intp(mixed arg);
+
+DESCRIPTION
+	Return 1 if arg is an integer number.
+
+SEE ALSO
+	stringp, pointerp, objectp, mappingp, functionp, floatp, zero_type

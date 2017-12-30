@@ -1,0 +1,19 @@
+NAME
+	replace - replace strings in a string or index in an array
+
+SYNTAX
+	string replace(string a,string b,string c);
+	string replace(string a,string *b,string *c);
+	mixed *replace(mixed *a,mixed b,mixed c);
+	
+
+DESCRIPTION
+	The first syntax replaces all occurances of the string b with c and
+	returns the resulting string. The second syntax expects b and c
+	to be 2 equal-sized arrays of strings, and will replace every string
+	in b with the corresponding string in c. The third syntax replaces all
+	values equal to b in the array a with c and returns the result.
+
+SEE ALSO
+	explode, implode
+	

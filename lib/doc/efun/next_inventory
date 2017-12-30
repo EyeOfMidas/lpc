@@ -1,0 +1,16 @@
+NAME
+	next_inventory - get next object in an inventory
+
+SYNTAX
+	object next_inventory(object ob);
+
+DESCRIPTION
+	Get next object in the same inventory as "ob". If ob is last in the
+	inventory, 0 is returned.
+
+NOTA BENE
+	If the object 'ob' is moved by move_object(), then next_inventory()
+	will return an object from the new inventory.
+
+SEE ALSO
+	first_inventory, all_inventory

@@ -1,0 +1,707 @@
+#!/usr/local/bin/lpc -Cstay
+
+#pragma all_inline
+#include <arpa/telnet.h>
+#include <socket.h>
+#include <socket_errors.h>
+
+#define DEBUG 1
+
+string file;
+string address;
+string name;
+string password;
+int auto_login=300;
+
+static int socket;
+
+void stdout(string foo);
+void stdin(string s);
+void login();
+void NULL() {}
+
+void m_stdin(string s)
+{
+  s=replace(s,({",","\\n"}),({"\n","\n"}));
+  map_array(s/"\n",stdin);
+}
+
+string my_gets()
+{
+  string s;
+  s=gets();
+  return s[0..strlen(s)-2];
+}
+
+void save()
+{
+  if(!strlen(file)) return;
+  write("msh: saving....\n");
+  rm(file);
+  write_file(file,save_object());
+  popen("chmod 600 "+file);
+}
+
+static mapping movement_verbs=([
+	"n":"s",
+	"s":"n",
+	"e":"w",
+	"w":"e",
+	"u":"d",
+	"d":"u",
+	"nw":"se",
+	"ne":"sw",
+	"se":"nw",
+	"sw":"ne",
+	"north":"south",
+	"south":"north",
+	"east":"west",
+	"west":"east",
+	"up":"down",
+	"down":"up",
+	"northwest":"southeast",
+	"northeast":"southwest",
+	"southeast":"northwest",
+	"southwest":"northeast",
+	"enter mirror":"climb",
+	"enter ship":"ashore",
+	"pull plug":"up",
+	"enter tree":"out",
+	"aft":"forward",
+	"forward":"aft",
+	"out":"in",
+	"in":"out",
+	]);
+
+void send(string s)
+{
+  socket_write(socket,s+"\n"); 
+#if DEBUG
+  write("sending: "+code_value(s)+"\n");
+#endif
+}
+
+/* from-to database */
+
+mapping dbase=([]);
+
+void remove_entry(string from,string to)
+{
+  if(dbase[to])
+    dbase[to]=m_delete(dbase[to],from);
+}
+
+void add_entry(string from,string to,string how)
+{
+#if DEBUG
+  write("msh: From:"+from+" to:"+to+" "+how+"\n");
+#endif
+  if(dbase[to])
+  {
+    dbase[to][from]=how;
+  }else{
+    dbase[to]=([from:how]);
+  }
+}
+
+/* 0 means no path.
+ * -1 means already there
+ * otherwise the returned string is a command to take you one
+ * step on the way
+ */
+mixed howgetto(string from,string to)
+{
+  mapping whereto,done;
+  int e,d;
+  string foo;
+  string *alpha,*beta,*gamma,*delta;
+
+  whereto=([to:""]);
+  done=([]);
+  while(!(foo=whereto[from]) && m_sizeof(whereto))
+  {
+    done|=whereto;
+    whereto=dbase & whereto;
+    alpha=m_indices(whereto);
+    beta=m_values(whereto);
+    whereto=([]);
+    for(e=0;e<sizeof(alpha);e++)
+    {
+      gamma=m_indices(dbase[alpha[e]]);
+      delta=m_values(dbase[alpha[e]]);
+      foo=beta[e];
+      for(d=0;d<sizeof(gamma);d++)
+	whereto[gamma[d]]=delta[d]+"\\n"+foo;
+    }
+    whereto-=done;
+  }
+  return foo;
+}
+
+static string current_pos;
+void goto(string where)
+{
+  string cmd;
+  if(stringp(cmd=howgetto(current_pos,where)))
+  {
+    send(replace(cmd,"\\n","\n"));
+    write("Msh: Ok.\n");
+  }else{
+    write("Msh: don't know the way or no such room.\n");
+  }
+}
+
+/* Autoactions */
+
+mixed *autoactions=({});
+
+void add_autoaction(string match,mixed action)
+{
+  autoactions+=({ ({match,sizeof(match/"%"),action}) });
+}
+
+void remove_autoaction(string a)
+{
+  autoactions=filter_array(autoactions,
+		   lambda(mixed *a,string b)
+			 {
+			   return a[0]!=b;
+			 },a);
+}
+
+void handle_autoactions(string s)
+{
+  mixed foo;
+  string *a;
+  a=allocate(10);
+  foreach(autoactions,foo)
+  {
+    if(sscanf(s,foo[0]+"%s",a[0],a[1],a[2],a[3],a[4],a[5],a[6],a[7],a[8],a[9])==foo[1])
+    {
+      if(stringp(foo[2]))
+      {
+	write("Autoaction: doing "+foo[2]+"\n");
+	s=foo[2];
+	s=replace(s,a[0..foo[1]-1],
+		  ("$1,$2,$2,$4,$5,$6,$7,$8,$9"/",")[0..foo[1]-1]);
+	m_stdin(s);
+      }else if(functionp(foo[2])){
+	foo[2](a);
+      }
+    }
+  }
+}
+
+void list_autoactions()
+{
+  mixed foo;
+  foreach(autoactions,foo)
+  {
+    write("\""+foo[0]+"\" -> ");
+    if(stringp(foo[2]))
+    {
+      write(foo[2]);
+    }else if(functionp(foo[2])){
+      write(function_name(foo[2])+"()");
+    }
+    write("\n");
+  }
+}
+
+/* Aliases */
+
+
+void handle_line(string foo) { handle_autoactions(foo); }
+
+static string from_mud_buffer="";
+
+void from_mud(int sock,string foo)
+{
+  foo-="\r";
+  write(foo);
+  from_mud_buffer+=foo;
+
+  while(sscanf(from_mud_buffer,"%s\n%s",foo,from_mud_buffer))
+  {
+    while(foo[0..1]=="> ")
+    {
+/*    handle_prompt(); */
+      foo=foo[2..strlen(foo)];
+    }
+    handle_line(foo);
+  }
+  while(from_mud_buffer[0..1]=="> ")
+  {
+/*    handle_prompt(); */
+    from_mud_buffer=from_mud_buffer[2..strlen(foo)];
+  }
+}
+
+string invert_dir(string x)
+{
+  while(sscanf(x," %s",x));
+  while(x[-1]==' ') x=x[0..strlen(x)-2];
+  if(x=movement_verbs[x])
+    return x;
+  write("Failed to invert direction "+x+"\n");
+  return "FAILED INVERT";
+}
+
+static mapping variables=([]);
+
+string eval(string s)
+{
+  mixed a,b;
+  if(!stringp(s)) return s;
+  if(sscanf(s,"%s==%s",a,b)) return eval(a)==eval(b);
+  if(sscanf(s,"%s!=%s",a,b)) return eval(a)!=eval(b);
+  if(sscanf(s,"%s+%s",a,b)) return eval(a)+eval(b);
+  if(sscanf(s,"!%s",a)) return !eval(a);
+  if(sscanf(s,"%*[ ]%d%*[ ]%s",a,b)==4 && b=="") return a;
+  return s;
+}
+
+mixed exec(string b)
+{
+  return clone_object(make_object("#pragma unpragma_strict_types\n"+
+				  "void create() { update(file_name()); expunge(); }\n"+
+				  "mixed foo() { "+b+" ;}\n"))->foo();
+}
+
+mapping aliases=([]);
+
+string *get_then_else(string s)
+{
+  int cnt,e,i;
+  string *words;
+
+  words=s/" ";
+  cnt=1;
+  for(i=e=0;e<sizeof(words);e++)
+  {
+    switch(words[e])
+    {
+    case "\\if":
+      if(i)
+      {
+	write("error: no then after if.\n");
+	return 0;
+      }
+      cnt++;
+      i=1;
+      break;
+
+    case "then":
+      if(!i)
+      {
+	write("error: if without then.\n");
+	return 0;
+      }
+      i=0;
+      break;
+
+    case "else":
+      if(i)
+      {
+	write("error: else without then.\n");
+	return 1;
+      }
+      if(!--cnt)
+      {
+	return ({words[0..e-1]*" ",words[e+1..sizeof(words)]*" "});
+      }
+      break;
+    }
+  }
+  return s;
+}
+
+void stdin(string bar)
+{
+  mixed a,b,c,d,*f;
+  int foo;
+
+  sscanf(bar,"%s\n",bar);
+  if(sscanf(bar,"\\%s",a))
+  {
+    sscanf(a,"%s %s",a,b);
+    switch(a)
+    {
+    case "1": case "2": case "3": case "4": case "5":
+    case "6": case "7": case "8": case "9": case "10":
+    case "11": case "12": case "13": case "14": case "15":
+    case "16": case "17": case "18": case "19": case "20":
+      sscanf(a,"%d",foo);
+      for(foo++;foo--;) m_stdin(b);
+      break;
+
+    case "help":
+      write("\\on - list autoaction\n");
+      write("\\on \"<string>\" <cmd list> - add autoaction\n");
+      write("\\on <string> - remove autoaction\n");
+      write("\\at <pos> - tell msh where you are\n");
+
+      write("\\from <pos> to <pos> do <cmd list> - Tell msh how to get from pos to pos\n");
+      write("\\route <pos> to <pos> do <cmd list> - like \\from but adds in both directions\n");
+      write("\\from <pos> to <pos> - Show how to get from pos to pos\n");
+      write("\\remove <pos> to <pos> - Remove entry in pos-to-pos database\n");
+      write("\\save - save to savefile (no automatic saves are done)\n");
+      write("\\goto <pos> - Send commands to go to pos\n");
+      write("\\auto <seconds> - Set autologin timeout\n");
+      write("\\wait <seconds> <cmd list> - Delay a command\n");
+      write("\\alias - List aliases\n");
+      write("\\alias <alias> - Remove alias\n");
+      write("\\alias <alias> <cmd list> - Add an alias\n");
+      write("\\login - try to login again\n");
+      break;
+
+    case "wait":
+      sscanf(b,"%d %s",foo,b);
+      call_out(m_stdin,foo,b);
+      write("msh: Will do "+b+" in "+foo+" seconds.\n");
+      break;
+
+    case "login":
+      login();
+      break;
+
+    case "alias":
+      if(!b)
+      {
+	sum_arrays(lambda(string foo,string bar)
+		 {
+		   write(foo+"           "[strlen(foo)..1000]+":"+bar+"\n");
+		 },m_indices(aliases),m_values(aliases));
+	break;
+      }
+      if(sscanf(b,"%s %s",b,c))
+      {
+	c=replace(c,",","\\n");
+	aliases[b]=c;
+	write("msh: Ok.\n");
+      }else{
+	if(aliases[b])
+	{
+	  aliases=m_delete(aliases,b);
+	  write("msh: Ok.\n");
+	}else{
+	  write("msh: No sush alias.\n");
+	}
+      }
+      break;
+
+    case "beep":
+      write(sprintf("%c",7));
+      break;
+
+    case "on":
+      if(!b)
+      {
+	list_autoactions();
+	break;
+      }
+      if(sscanf(b,"\"%s\" %s",a,b))
+      {
+	b=replace(b,",","\\n");
+	add_autoaction(a,b);
+	write("msh: ok.\n");
+      }else{
+	remove_autoaction(b);
+	write("msh: ok.\n");
+      }
+      break;
+
+    case "at":
+      current_pos=b;
+      write("msh: Ok, You're now in: "+current_pos+"\n");
+      break;
+
+    case "auto":
+      sscanf(b,"%d",auto_login);
+      write("msh: Autologin set to "+auto_login+" seconds.\n");
+      break;
+
+    case "remove":
+      if(!sscanf(b,"%s to %s",a,b))
+      {
+	write("msh: Usage: \remove <pos> to <pos>\n");
+	break;
+      }
+      remove_entry(a,b);
+      write("msh: Ok.\n");
+      break;
+
+    case "r":
+    case "route":
+      if(!sscanf(b,"%s to %s do %s",a,b,c))
+      {
+	write("msh: Usage: \route <pos> to <pos> do <list>\n");
+	break;
+      }
+      c=replace(c,",","\\n");
+      c=(c/"\\n"-({""}))*"\\n";
+      f=map_array(c/"\\n",invert_dir);
+      for(foo=0;foo<sizeof(f)/2;foo++)
+      {
+	d=f[foo];
+	f[foo]=f[sizeof(f)-foo-1];
+	f[sizeof(f)-foo-1]=d;
+      }
+      d=f*"\\n";
+      if(sizeof(d/"FAILED INVERT")>1)
+	break;
+      
+      add_entry(a,b,c);
+      add_entry(b,a,d);
+      write("msh: Ok.\n");
+      break;
+
+    case "from":
+    case "f":
+      if(!sscanf(b,"%s to %s",a,b))
+      {
+	write("msh: Usage: \from <pos> to <pos> [do <list>]\n");
+	break;
+      }
+      if(sscanf(b,"%s do %s",b,c))
+      {
+	c=replace(c,",","\\n");
+	if(c[-1]!='\n') c+="\n";
+	add_entry(a,b,c);
+	write("msh: Ok.\n");
+      }else{
+	c=howgetto(a,b);
+	if(!stringp(c))
+	{
+	  write("msh: no known way.\n");
+	}else{
+	  write("msh: path = "+replace(c,"\\n",",")+"\n");
+	}
+      }
+      break;
+
+    case "goto":
+    case "g":
+      goto(b);
+      break;
+
+    case "clean":
+      autoactions=({});
+      dbase=([]);
+      write("msh: Ok.\n");
+      break;
+
+    case "data":
+      write(code_value(dbase));
+      write("\n");
+      break;
+
+    case "dumpauto":
+      write(code_value(autoactions));
+      write("\n");
+      break;
+
+    case "dump":
+      write("===============================================================\n");
+      write("Current location: "+current_pos+"\n");
+      write("===============================================================\n");
+      break;
+
+
+    case ".":
+      from_mud(socket,"> ");
+      break;
+	  
+    case "save":
+      save();
+      write("msh: saved.\n");
+      break;
+
+    case "shutdown":
+      shutdown();
+      break;
+
+    case "if":
+      if(!sscanf(b,"%s then %s",a,b))
+      {
+	write("Usage: \\if <stmnt> then <commands> else <commands>\n");
+	break;
+      }
+      a=eval(a);
+      b=get_then_else(b);
+      if(b) m_stdin(b[!(a && (!stringp(a) || strlen(a)))]);
+      break;
+
+    case "print":
+      if(!b)
+      {
+	write("Usage: \\print <expression>\n");
+	break;
+      }
+      a=eval(b);
+      write("Result: "+code_value(a,1)+"\n");
+      break;
+
+    case "eval":
+    case "exec":
+      if(a=exec(b))
+	write("Result: "+code_value(a,1)+"\n");
+      break;
+
+    default:
+      if(sscanf(a+(b?" "+b:""),"%s=%s",b,c))
+      {
+	sscanf(b,"%s ",b);
+	while(sscanf(b," %s",b));
+	write("Setting $"+b+" to "+c+".\n");
+	variables[b]=c;
+	break;
+      }
+	
+      write("msh: no such action.\n");
+      break;
+      
+    case "quote":
+    case "q":
+      if(movement_verbs[b]) current_pos=0;
+      send(b);
+      break;
+    }
+  }else{
+    c=bar/" ";
+    if(a=aliases[c[0]])
+    {
+      c[0]=c[1..10000]*" ";
+      b=replace(a,
+		explode("#@,#1,#2,#3,#4,#5,#6,#7,#8,#9",",")[0..sizeof(c)-1],
+		c[0..10]);
+      map_array(b/"\\n",stdin);
+    }else{
+      if(movement_verbs[bar]) current_pos=0;
+      send(bar);
+    }
+  }
+}
+
+
+void test1() { write(function_name(this_function())+"\n"); }
+void test3() { write(function_name(this_function())+"\n"); }
+void test4() { write(function_name(this_function())+"\n"); }
+
+static int login_state;
+void login_from_mud(int fd,string s)
+{
+  string tmp;
+  from_mud(fd,s);
+  s=lower_case(s);
+  switch(login_state)
+  {
+  case 0:
+    if(sscanf(s,"%sname%s",tmp,tmp))
+    {
+      send(name);
+      login_state++;
+    }
+    break;
+  case 1:
+    if(sscanf(s,"%snew%s",tmp,tmp)) login_state++;
+  case 2:
+  case 3:
+    if(sscanf(s,"%spassword%s",s,s))
+    {
+      socket_write(socket,password+"\n");  
+      if(login_state!=2)
+	set_socket_read(fd,from_mud);
+      login_state++;
+    }
+  }
+}
+
+void connection_closed()
+{
+  write("Connection closed by foreign host.\n");
+  if(auto_login)
+  {
+    remove_call_out(login);
+    remove_call_out(login);
+    write("msh: Will try again in "+auto_login+" seconds.\n");
+    call_out(login,auto_login);
+  }
+}
+
+void login()
+{
+  int change=0;
+  int err;
+  login_state=0;
+  remove_call_out(login);
+  remove_call_out(login);
+  if(!name)
+  {
+    change++;
+    write("Insert name: ");
+    name=my_gets();
+  }
+  if(!password)
+  {
+    change++;
+    write("Insert password: ");
+    password=popen("stty -echo ; read 'foo' ; stty echo ; echo $foo");
+    sscanf(password,"%s\n",password);
+  }
+  if(!address)
+  {
+    change++;
+    write("Insert address: ");
+    address=my_gets();
+    while(sscanf(address," %s",address));
+    if(sscanf(address,"%*d.%*d.%*d.%*s")!=4)
+    {
+      string a;
+      int b;
+      if(!sscanf(address,"%s %d",a,b))
+      {
+	write("Error in address.\n");
+	exit(1);
+      }
+      write("Looking up address.\n");
+      a=popen("nslookup "+a);
+      sscanf(a,"%*sName:%*sAddress: %s\n",address);
+      while(sscanf(address," %s",address));
+      write("Ip number is: "+address+"\n");
+      address+=" "+b;
+    }
+  }
+  if(change)
+    save();
+  write("Trying "+address+" ...\n");
+  socket=socket_create(STREAM | BUFFERED_INPUT | BUFFERED_OUTPUT ,
+		       test1,connection_closed);
+  socket_connect(socket,address,test3,test4);
+  set_socket_read(socket,login_from_mud);
+
+  /* check out why this is needed */
+/*  set_socket_mode(socket,STREAM | BUFFERED_INPUT | BUFFERED_OUTPUT); */
+  
+}
+
+
+int main(int argc,string *argv,string *env)
+{
+  string s;
+  if(argc>1)
+  {
+    file=argv[1];
+  }else{
+    write("Save file (press return for no saves) ?: ");
+    file=my_gets();
+  }
+  
+  
+  if(strlen(file))
+    if(s=read_bytes(file))
+      restore_object(s);
+
+  login();
+}
+

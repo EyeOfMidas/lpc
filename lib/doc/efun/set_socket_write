@@ -1,0 +1,12 @@
+NAME
+	set_socket_write - set the write callback for a socket
+
+SYNTAX
+	int set_socket_write(int fd,function write_callback);
+
+DESCRIPTION
+	Set the write_callback entry for socket fd. Return 1 for
+	success else 0.
+
+SEE ALSO
+	socket_create, set_socket_read, set_socket_close

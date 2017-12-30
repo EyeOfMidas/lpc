@@ -1,0 +1,16 @@
+NAME
+	search_array - search a for something in an array
+
+SYNTAX
+	int search_array(mixed *arr,function fun,mixed arg, ...);
+	int search_array(object *arr,string fun,mixed arg, ...);
+	int search_array(function *arr,-1,mixed arg, ...);
+
+DESCRIPTION
+	search_array works like map_array, only it returns the index of the
+	first call that returned true instead or returning an array of the
+	returned values. If no call returns true, -1 is returned.
+
+SEE ALSO
+	sum_arrays, map_mapping, filter_array, filter_mapping, sum_mappings
+	member_array

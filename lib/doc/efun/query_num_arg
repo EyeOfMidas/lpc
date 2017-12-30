@@ -1,0 +1,12 @@
+NAME
+	query_num_arg - return the number of args given to this function
+
+SYNTAX
+	int query_num_arg();
+
+DESCRIPTION
+	Returns the number of arguments that was used when calling this
+	function, very nice when using varargs.
+
+SEE ALSO
+	call_function

@@ -1,0 +1,11 @@
+
+LPC4 features an optimizer, this can cause some strange effects from time
+to time, which I will try to describe here:
+
+	o 1/0 is a compiler error, not a run-time error, as lpc4 tries to
+	  evaluate it during compilation.
+
+	o The optimizer will sometimes remove code that would otherwize
+	  yield errors, for instance (void)(1/zero) will always be removed
+	  even if zero is 0.
+

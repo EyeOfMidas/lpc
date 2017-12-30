@@ -1,0 +1,16 @@
+NAME
+	m_set_default - set the default value of a mapping
+
+SYNTAX
+	mapping m_set_default(mapping map,mixed def);
+
+DESCRIPTION
+	Set the value that is returned when you index a mapping on
+	an index that isn't present in the mapping.
+
+BUGS
+	The default value of the mapping is not saved by save_object or
+	code_value.
+
+SEE ALSO
+	m_get_default

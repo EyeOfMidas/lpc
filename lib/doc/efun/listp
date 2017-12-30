@@ -1,0 +1,11 @@
+NAME
+	listp - is the argument a list?
+
+SYNTAX
+	int listp(mixed l);
+
+DESCRIPTION
+	Returns 1 if the argument is a list.
+
+SEE ALSO
+	l_delete, l_sizeof, listp

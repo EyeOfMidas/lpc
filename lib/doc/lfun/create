@@ -1,0 +1,13 @@
+NAME
+	create - called on creation
+
+SYNTAX
+	void create() { ... }
+
+DESCRIPTION
+	This function is called immidiatly when the object is cloned, it
+	is always the first function called. Normally setup and
+	initializations can and should be done here.
+
+SEE ALSO
+	reset

@@ -1,0 +1,22 @@
+NAME
+	add_action - add a command to this_player()
+	
+SYNTAX
+	void add_action(string fun,string command,int priority);
+	void add_action(string fun,string command,int priority,mixed extra);
+	
+DESCRIPTION
+	add_action() enables this_player() to use the string command at the
+	prompt. If how is zero or not suppied command is sent to sscanf() and
+	a matching process is done (if command contains any '%' that is) the
+	function fun will then be called with the arguments from the match.
+	If how is not zero it will specify that command shall be sent to
+	parse_command() instead of sscanf() and it will also specify where
+	parse_command() shall look for it's objects.  The optional extra
+	argument will be sent to the function after the matching arguments.
+	The priority number determines if this action should be tried to
+	matched before or after other actions. Higher priority means before
+	other add_actions.
+
+SEE ALSO
+	remove_action, query_verb, set_this_player

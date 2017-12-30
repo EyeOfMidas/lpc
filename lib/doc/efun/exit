@@ -1,0 +1,12 @@
+NAME
+	exit - exit from driver, fast
+
+SYNTAX
+	void exit(int s);
+
+DESCRIPTION
+	This function can only be called when in batch mode. It simply
+	exits the mudprocess with the returncode s.
+
+SEE ALSO
+	shutdown

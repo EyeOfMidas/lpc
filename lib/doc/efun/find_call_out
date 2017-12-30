@@ -1,0 +1,13 @@
+NAME
+	find_call_out - find out when the next call out to 'func' is
+
+SYNTAX
+	int find_call_out(function func)
+
+DESCRIPTION
+	Find the first call out due to be executed for function func, and
+	return the time left. If it is not found, then zero_type will return
+	1 for the value returned.
+
+SEE ALSO
+	call_out, remove_call_out, call_out_info, zero_type

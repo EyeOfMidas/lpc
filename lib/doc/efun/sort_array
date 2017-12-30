@@ -1,0 +1,20 @@
+NAME
+	sort_array - sort an array
+
+SYNTAX
+	mixed *sort_array(mixed *arr,function fun);
+	or
+	mixed *sort_array(mixed *arr);
+
+DESCRIPTION
+	The first syntax sorts an array after a compare-function fun
+	which takes two arguments and should return 1 if the first argument
+	is larger then the second.
+	The second syntax sorts automatically, so that ints are sorted in
+	numerical order for themselves, strings in alphabetical order for
+	themselves and the rest of the types are sorted in random order
+	but the types are separated. Objects for themselves, arrays for
+	themselves etc. etc.
+
+SEE ALSO
+	map_array, filter_array

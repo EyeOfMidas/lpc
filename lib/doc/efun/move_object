@@ -1,0 +1,13 @@
+NAME
+	move_object - move this_object() somewhere
+
+SYNTAX
+	void move_object(mixed dest);
+
+DESCRIPTION
+	Moves this_object into into the object dest. To move another
+	object than this object use: ob->move(dest); Note that init,
+	object_enter and exit will be called in approperiate objects.
+
+SEE ALSO
+	lfun/exit, lfun/init, lfun/object_enter

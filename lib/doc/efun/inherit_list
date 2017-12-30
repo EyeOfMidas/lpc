@@ -1,0 +1,12 @@
+NAME
+	inherit_list - return a list of all inherited programs
+
+SYNTAX
+	string *inherit_list(object o);
+
+DESCRIPTION
+	Returns an array containing the names of all programs that was
+	inherited by the object.
+
+SEE ALSO
+	function_exists, load, update

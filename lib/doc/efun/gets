@@ -1,0 +1,16 @@
+NAME
+	gets - get a string from stdin
+
+SYNTAX
+	string gets();
+
+DESCRIPTION
+	This function can only be called when the driver is i batchmode. It
+	locks the driver and waits for input from stdin, and when it has
+	received a line it returns it. If an end of file is encountered before
+	any characters have been read, 0 is returned.
+
+NOTA BENE
+	This function may only be called by objects with the same euid as
+	the masters uid or when the driver is in batch mode.
+

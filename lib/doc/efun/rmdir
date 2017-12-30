@@ -1,0 +1,11 @@
+NAME
+	rmdir - delete a directory
+
+SYNTAX
+	void rmdir(string dir);
+
+DESCRIPTION
+	Remove directory dir. Returns 0 for failiure and 1 for success.
+
+SEE ALSO
+	rm, mkdir.

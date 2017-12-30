@@ -1,0 +1,13 @@
+NAME
+	file_length - return the number of lines in a file
+
+SYNTAX
+	int file_length(string file);
+
+DESCRIPTION
+	Return the number of lines in a file.
+	Returns -1 if the file doesn't exist.
+	Returns -2 if it is a directory.
+
+SEE ALSO
+	file_size, file_stat

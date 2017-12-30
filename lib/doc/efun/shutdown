@@ -1,0 +1,8 @@
+NAME
+	shutdown - shut the mud down
+
+SYNTAX
+	void shutdown();
+
+DESCRIPTION
+	Shuts down the game. Do not 'try' it.

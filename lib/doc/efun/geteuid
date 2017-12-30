@@ -1,0 +1,12 @@
+NAME
+	geteuid - get the effective uid of an object
+
+SYNTAX
+	string geteuid(object ob);
+
+DESCRIPTION
+	Get the effective userid of the object ob. If no object is given
+	the uid ofthis_object() will be returned.
+
+SEE ALSO
+	seteuid, export_uid, geteuid

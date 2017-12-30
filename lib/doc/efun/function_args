@@ -1,0 +1,13 @@
+NAME
+	function_args - return the number of arguments a function expects.
+
+SYNTAX
+	int function_args(function f);
+
+DESCRIPTION
+	Returns the number of arguments the function f expects.
+	Note that no special care is taken for varargs functions.
+
+SEE ALSO
+	call_function, get_function, get_function_list
+

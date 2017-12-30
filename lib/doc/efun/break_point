@@ -1,0 +1,8 @@
+NAME
+	break_point - check the stack
+
+SYNTAX
+	void break_point();
+
+DESCRIPTION
+	Checks the internal stack in the compiler, used for debugging only.

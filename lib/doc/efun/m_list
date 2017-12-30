@@ -1,0 +1,11 @@
+NAME
+	m_list - return a list with all the indices of a mapping
+
+SYNTAX
+	list m_list(mapping map);
+
+DESCRIPTION
+	equal to: mklist(m_indices(map))
+
+SEE ALSO
+	mklist, m_indices

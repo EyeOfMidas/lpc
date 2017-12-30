@@ -1,0 +1,30 @@
+The program was written originally by
+
+Lars Pensj|, April 1989 (lars@cd.chalmers.se).
+
+and seriously upgraded by
+
+Fredrik Hubinette, 1993, 1994 (albert_e@lysator.liu.se)
+
+Lars' credits:
+
+Dwayne Fontenot (Jacques) for the socket efuns, addr_server, and
+enhancements to comm.c.
+
+Dave Richards (Cygnus) for enhancements to the socket efuns.
+
+The regexp package was made by Henry Spencer.
+
+Valuable help and hints from: Mark Nagel, James Seidman, Moonchilde and more.
+
+Sean T Barrett made smalloc.c.
+
+Lennart Augustsson convinced me to implement a compiler for a virtual
+stack machine. He also implemented the built-in preprocessor.
+
+John S. Price found and fixed many bugs.
+
+Michael Malone, Michael O'Reilly, Klaus Rennecke, J|rn Rennecke and
+Germano Caronni found and fixed a large amount of bugs.
+
+Petri Wessman fixed changes for SCO unix and AIX.

@@ -1,0 +1,22 @@
+NAME
+	allocate - allocate an array
+SYNTAX
+	mixed *allocate(int size);
+	mixed *allocate(int size,int size2,int size3, ...);
+
+DESCRIPTION
+	Allocate an array of size elements. The number of elements must be
+	>= 0 and when running in mudlib (as opposed to script mode) not
+	bigger than MAX_ARRAY_SIZE (normally 5000).  If the second syntax
+	is given allocate will allocate a n-dimensional array with the size
+	size x size2 x size3 x ... note that this is accomplished by
+	allocating an array an filling it with arrrays, and then filling
+	them with arrays and so on.
+
+NOTA BENE
+	Arrays are dynamically allocated there is no need to declare them
+	like int a[10]=allocate(10); (and it isn't possible either) like
+	in C, just int *a=allocate(10); will do.
+
+SEE ALSO
+	sizeof, pointerp

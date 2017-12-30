@@ -1,0 +1,12 @@
+NAME
+	first_inventory - get the first object in an object
+
+SYNTAX
+	object first_inventory(mixed ob)
+
+DESCRIPTION
+	Get the first object in the inventory of ob, where ob is either
+	an object or the hash_name of an object.
+
+SEE ALSO
+	next_inventory, all_inventory

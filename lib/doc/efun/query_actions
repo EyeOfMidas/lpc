@@ -1,0 +1,23 @@
+NAME
+	query_actions - Return an array describing add_actions
+
+SYNTAX
+	mixed *query_actions(object by,object on);
+
+DESCRIPTIONS
+	Returns an array of arrays of this format:
+	({
+	  ({ "commmand", function, priority }),
+          ...
+        })
+
+	If by is given (and is an object) then only actions defined by
+	that object will be returned. If on is given then only actions
+	defined on that object is returned. If on is not given (or given
+	as 0) then this_player() will be used. Zero is returned if you try
+	to see what actions a nonliving object has.
+
+SEE ALSO
+	add_action, query_verb, living
+
+

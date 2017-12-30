@@ -1,0 +1,10 @@
+NAME
+	putenv - set an environment variable
+
+SYNTAX
+	void putenv(string ass);
+
+DESCRIPTION
+	This function can only be called when in batch mode. It takes a string
+	on the format "<var>=<value>" and assigns the value to the
+	environment-variable var.

@@ -1,0 +1,16 @@
+NAME
+	dump_malloc_data - dump some data about memory usage
+
+SYNTAX
+	string dump_malloc_data();
+
+DESCRIPTION
+	Returns a string containing readable info about malloced memory.
+
+BUGS
+	The string won't contain any info if something other than smalloc
+	is used.
+
+SEE ALSO
+	dump_string_data, dump_heart_beat_data,	dump_opt_status
+	dump_prog_table_data, dump_index_table_data

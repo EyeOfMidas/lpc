@@ -1,0 +1,12 @@
+NAME
+	environment - return the environment of an object
+
+SYNTAX
+	object environment(object obj);
+
+DESCRIPTION
+	Return the surrounding object to obj. If no argument is given,
+	it returns the surrounding to the current object.
+
+SEE ALSO
+	first_inventory, next_inventory, all_inventory, deep_inventory

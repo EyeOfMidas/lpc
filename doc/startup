@@ -1,0 +1,29 @@
+This files summarizes what the driver does at startup.
+
+1) It scans through the command line options to check for -m, -D, -C and
+   -I to determine what is to be done later.
+
+2) If -m is was given, it changes it current directory to that dir.
+
+3) The master object is loaded and create is called in the master, note that
+   it is not a good idea to start loading objects from create() in master.c
+   because simul_efuns and include dirs hasn't been set up yet. If the
+   environment-variables LPC_MASTER is set, then that master object will be
+   used. If not, $(MUD_LIB)/secure/master.c is loaded when not in script mode,
+   and $(BIN_DIR)/master.c is loaded when in script mode.
+
+4) The simul_efun object is loaded. The filename for this object should be
+   returned by get_simul_efun in the master object. When in script mode,
+   get_simul_efun will receive BINDIR and MUD_LIB as arguments.
+
+5) Next, define_include_dirs is called in the master, it will also receive
+   BINDIR and MUD_LIB as arguments in script mode.
+
+6) Now, signals and socket-functions are initialized.
+
+7) The command line is scanned again, now the rest of the arguments are
+   parsed. See the file 'script_mode' for furter description of what happens
+   in script mode here.
+
+8) Startup is finished, the driver starts doing what it does best.
+

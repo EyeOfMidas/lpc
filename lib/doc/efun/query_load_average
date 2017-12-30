@@ -1,0 +1,9 @@
+NAME
+	query_load_average - return a sring with load statistics
+
+SYNTAX
+	string query_load_average();
+
+DESCRIPTION
+	Returns a self-explaining (to me), redable string with load
+	statistics.

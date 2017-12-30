@@ -1,0 +1,14 @@
+NAME
+	get_function - get a functionpointer
+
+SYNTAX
+	function get_function(object o,string fun);
+	or
+	o->fun
+
+DESCRIPTION
+	Return a functionpointer to the function fun in the object o.
+	If o doesn't have such a function 0 is returned.
+
+SEE ALSO
+	call_function

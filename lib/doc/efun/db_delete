@@ -1,0 +1,11 @@
+NAME
+	db_delete - delete an entry from a database
+
+SYNTAX
+	int db_delete(string file, string index);
+
+DESCRIPTION
+	Delete the entry index from the database file, returns 1 if successful.
+
+SEE ALSO
+	db_set, db_get, db_indices

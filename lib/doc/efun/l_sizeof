@@ -1,0 +1,11 @@
+NAME
+	l_sizeof - return the number of members in a list
+
+SYNTAX
+	int l_sizeof(list l);
+
+DESCRIPTION
+	equal to: sizeof(indices(l))
+
+SEE ALSO
+	sizeof, listp, l_delete, indices

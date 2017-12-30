@@ -1,0 +1,12 @@
+NAME
+	indices - return the indices of a list or mapping
+
+SYNTAX
+	mixed *indices(list|mapping foo);
+
+DESCRIPTION
+	For mappings it works just like m_indices.
+	For lists it returns all the member of that list as an array.
+
+SEE ALSO
+	l_sizeof, listp, l_delete

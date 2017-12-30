@@ -1,0 +1,14 @@
+NAME
+	function_exists - determine if a function exist in an object or not
+
+SYNTAX
+	string function_exists(string str, object ob)
+
+DESCRIPTION
+	Return the file name of the program that defines the function str
+	in object ob. The returned value can be other than file_name(ob)
+	if the function is defined by an inherited object.
+	0 is returned if the function was not defined.
+
+SEE ALSO
+	get_function

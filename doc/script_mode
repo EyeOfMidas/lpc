@@ -1,0 +1,54 @@
+When giving the -C optoion to the driver the following will happen:
+
+1. Script mode (also called batch mode) will be activated.
+   In script mode many of the limitations that are used during normal
+   execution are removed, MAX_EVAL_COST, MAX_ARRAY_SIZE and
+   READ_FILE_MAX_SIZE are for instance completely ignored. Also, some efuns
+   such as popen, sleep and fork become available. The driver also uses the
+   whole filesystem as mudlib when in script mode, treating all filenames as
+   relative to the current directory.
+
+2. The master object is loaded. In script mode a different master will be
+   loaded, namely $(BIN_DIR)/master.c. You can use your own master.c if you
+   like by setting the environment-variable LPC_MASTER to the filename of
+   your master.c
+
+3. The function batch in the master is called. The first argument will be
+   whatever string was given after -C (ie. if you write -Cfoo the first
+   argument will be foo) The second argument is an array of strings
+   containging all arguments after the argument that started with -C and
+   the third argument is an array of all environment-variables on the form:
+   ({"name=value","name=value",...}).
+
+
+The standard bin/master.c might have a function batch() that looks something
+like this:
+
+function in,sig;
+
+void batch(string flag,string *argv,string *env)
+{
+  int e;
+  object script;
+
+  script=(object)(argv[0]);
+  sig=script->signal;
+
+  e=script->main(sizeof(argv),argv,env);
+  
+  if(flag!="stay")
+    exit(intp(e)&&e);
+
+  if(script) in=script->stdin;
+}
+
+As you see this allows a script that looks very much like a C program with
+a main() that receives an argc and argv. If you use unix, it is possible to
+write a script starting with #!driver -C because the compiler will ignore the
+first line if it starts with #!. If I have a script that looks like this:
+
+#!driver -C
+void main() { write("Hello world.\n"); }
+
+And it's x-bit is set, then I can execute the script as if it was a binary.
+

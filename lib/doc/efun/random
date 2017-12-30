@@ -1,0 +1,8 @@
+NAME
+	random - return a random number
+
+SYNTAX
+	int random(int n);
+
+DESCRIPTION
+	Return a number in the random range [0 .. n-1].

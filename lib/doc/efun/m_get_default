@@ -1,0 +1,12 @@
+NAME
+	m_get_default - get the default value of a mapping
+
+SYNATAX
+	mixed m_get_default(mapping map);
+
+DESCRIPTION
+	Get the value that is returned when you index the map map on an index
+	that isn't present in the mapping.
+
+SEE ALSO
+	m_set_default

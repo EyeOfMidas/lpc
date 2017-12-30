@@ -1,0 +1,9 @@
+NAME
+	rusage - return some info about the mud process in an array.
+
+SYNTAX
+	int *rusage();
+
+DESCRIPTION
+	See your unix manual for details.
+	First three arguments are converted to milliseconds for simplicity.

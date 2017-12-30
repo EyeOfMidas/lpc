@@ -1,0 +1,14 @@
+NAME
+	dump_string_data - dump some data about shared string
+
+SYNTAX
+	string dump_string_data(int flavour);
+
+DESCRIPTION
+	Returns a string containing readable info about shared strings.
+	The information comes in two flavours, depending on weather the
+	argument is 0 or 1.
+
+SEE ALSO
+	dump_malloc_data, dump_heart_beat_data,	dump_opt_status
+	dump_prog_table_data, dump_index_table_data

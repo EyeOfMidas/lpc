@@ -1,0 +1,11 @@
+NAME
+	ceil - round float upwards
+
+SYNTAX
+	float floor(float x);
+
+DESCRIPTION
+	Returns a float rounded up to nearest higher integer value.
+
+SEE ALSO
+	floor

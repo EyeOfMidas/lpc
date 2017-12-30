@@ -1,0 +1,12 @@
+NAME
+	m_cleanup - clean out indices that have the default value anyway
+
+SYNTAX
+	mapping m_cleanup(mapping map);
+
+DESCRIPTION
+	Return a mapping with all the indices whos values was equal to the
+	default value removed.
+
+SEE ALSO
+	m_set_default, m_get_default

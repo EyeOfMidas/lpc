@@ -1,0 +1,23 @@
+NAME
+	mapping - an associative array
+
+SYNTAX
+	contruction: ([ index1:data1 , index2:data2 , ... ])
+	indexing:    data1=map[index1]
+
+OPERATORS
+	[], +, -, &, |, ^
+	m_delete, mkmapping, mappingp, m_values, m_indices, m_list, m_sizeof
+	sum_mappings, map_mapping, filter_mapping, m_cleanup
+
+DESCRIPTION
+	A mapping is basically an array that can be indexed on any type, not
+	not just integers. It can also be seen as a way of linking data
+	(usaully strings) together. It consists of a lot of index-data pairs
+	which are linked togeter in such a way that map[index1] returns data1.
+	It is also possible to set that data by writing map[index1]=new_data1.
+	If you try to set an index in a mapping that isn't already present in
+	the mapping then it will be added.
+
+SEE ALSO
+	array, operators

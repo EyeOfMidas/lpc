@@ -1,0 +1,36 @@
+NAME
+	add_simul_efun - add a simul_efun
+	
+SYNTAX
+	void add_simul_efun(string name,function fun);
+	or
+	void add_simul_efun(string name);
+	
+DESCRIPTION
+	add_simul_efun sets up a function to be used as a simul_efun. What this
+	means is that the function fun will work almost like an efun, and can
+	be accessed from any object. (compiled after the call to
+	add_simul_efun) The second syntax turns a simul_efun off, ie. those
+	programs that has already linked to it can still use it, but it will
+	not be available for programs compiled later. If you use the first
+	syntax, and there is already a simul efun with that name, the old one
+	will be replaced, and _all_ programs will use the new function.
+	(not just those compiled later)
+
+EXAMPLE
+	/* This adds a function "linebreak" to the list of simul_efuns */
+	add_simul_efun("linebreak",lambda(string s,int cols)
+          {
+            if(!cols) cols=78;
+            return sprintf("%-=*s\n",cols,s);
+          }
+
+	/* This simulates the old simul_efun behaviour */
+	function *f;
+	f=get_function_list((object)"/secure/simul_efun");
+	for(e=0;e<sizeof(f);e++)
+	  add_simul_efun(function_name(f[e]),f);
+
+SEE ALSO
+	get_function_list
+

@@ -1,0 +1,15 @@
+NAME
+	copy_value - copy a value recursively
+
+SYNTAX
+	mixed copy_value(mixed arg);
+
+DESCRIPTION
+	Copies mappings, lists and arrays recursively, that is, it doesn't
+	just copy the pointer and add a reference, but allocates new memory
+	and copies all the values in the arrays/mappings/lists.
+	Thus, if a is an array, is_equal(a,copy_value(a)) is true, but
+	a == copy_value(a) is false.
+
+SEE ALSO
+	is_equal

@@ -1,0 +1,12 @@
+NAME
+	disable_commands - disable add actions
+
+SYNTAX
+	void disable_commands();
+
+DESCRIPTION
+	The opposite of enable_commands, frees all actions given to this
+	object.
+
+SEE ALSO
+	enable_commands, living

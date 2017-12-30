@@ -1,0 +1,10 @@
+NAME
+	cd - change dir
+
+SYNTAX
+	int cd(string dir);
+
+DESCRIPTION
+	This function can only be called from batch mode. It attempts to change
+	the drivers working directory to dir, and returns 0 on success,
+	otherwise not 0.

@@ -1,0 +1,18 @@
+NAME
+	command - execute a command
+
+SYNTAX
+	int command(string str)
+	int command(string str,object o)
+
+DESCRIPTION
+	Execute str as a command given directly by the player. Any effects
+	of the command will apply to the current object, or the object give
+	as the optional second argument. Return value is 0 for failure.
+	Otherwise, a numeric value is returned, which tells the
+	evaluation cost. Bigger number means higher cost. The evaluation
+	cost is approximately the number of of machine code instructions
+	executed.
+
+SEE ALSO
+	add_action, enable_commands, disable_commands

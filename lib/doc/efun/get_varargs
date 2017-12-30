@@ -1,0 +1,17 @@
+NAME
+	get_varargs - return the rest of the arguments
+
+SYNTAX
+	mixed *get_varargs();
+
+DESCRIPTION
+	If a function is defined as:
+		int foo(int a,int b,...)
+		{
+		  /* the code */
+		}
+	Then it can call get_varargs() to get all arguments except the two
+	first, which will be in a and b respectively.
+
+SEE ALSO
+	call_function, query_num_arg

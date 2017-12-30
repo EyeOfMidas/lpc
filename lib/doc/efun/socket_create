@@ -1,0 +1,64 @@
+NAME
+	socket_create - create an efun socket
+
+SYNOPSIS
+	#include <socket.h>
+	#include <socket_errors.h>
+
+	int socket_create(int mode, function read_callback,
+		function close_callback)
+	or
+	int socket_create(int mode, function close_callback);
+	or
+	int socket_create(int mode);
+
+DESCRIPTION
+	socket_create() creates an efun socket. mode determines which type of
+	socket is created. Currently supported socket modes are:
+
+	STREAM		for sending raw data using TCP protocol.
+	DATAGRAM	for using UDP protocol.
+
+	For stream-mode there are also two sub-modes (or-ed with the major
+	mode):
+	BUFFERED_OUTPUT - Buffer output, you don't have to care about
+		buffering yourself.
+
+	BUFFERED_INPUT - Buffer input, split input into one callback per
+		line, but note that there might still be more than one
+		callback per line.
+
+	The argument read_callback is the name of a function for the driver to
+	call when the socket gets data from its peer. The read callback should
+	follow this format:
+
+	void read_callback(int fd, mixed message)
+
+	Where fd is the socket which received the data, and message is the
+	data which was received.
+
+	The argument close_callback is the name of a function for the driver
+	to call if the socket closes unexpectedly, i.e. not as the result of
+	a socket_close() call. The close callback should follow this format:
+
+	void close_callback(int fd)
+
+	Where fd is the socket which has closed.
+	NOTE: close_callback is not used with DATAGRAM mode sockets.
+
+RETURN VALUES
+	socket_create() returns:
+		a non-negative descriptor on success.
+		a negative value indicated below on error.
+
+ERRORS
+	EEMODENOTSUPP	Socket mode not supported.
+	EESOCKET	Problem creating socket.
+	EESETSOCKOPT	Problem with setsockopt.
+	EENONBLOCK	Problem setting non-blocking mode.
+	EENOSOCKS	No more available efun sockets.
+	EESECURITY	Security violation attempted.
+
+SEE ALSO
+	socket_accept, socket_bind, socket_close, socket_connect,
+	socket_listen, socket_write,socket_listen, socket_write

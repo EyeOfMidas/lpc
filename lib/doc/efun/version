@@ -1,0 +1,8 @@
+NAME
+	version - return the version of the driver
+
+SYNTAX
+	string version();
+
+DESCRIPTION
+	Retuns the version of the driver as a string.

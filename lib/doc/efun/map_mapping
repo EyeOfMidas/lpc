@@ -1,0 +1,16 @@
+NAME
+	mapr_mapping - map a mapping through a function
+
+SYNTAX
+	mapping map_mapping(mapping map,function fun,mixed args...);
+	mapping map_mapping(mapping map,string fun,mixed args...);
+	mapping map_mapping(mapping map,-1,mixed args...);
+
+DESCRIPTION
+	Works exactly like map_array, but works on a mapping.
+	map_array(X,Y,Z) is equivialent to:
+	mkmapping(m_indices(X),map_array(m_values(X),Y,Z))
+	but faster....
+
+SEE ALSO
+	map_array, filter_mapping

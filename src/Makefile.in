@@ -1,0 +1,334 @@
+# This line is needed on some machines.
+@SET_MAKE@
+
+#
+#Choose your malloc
+#
+MALLOC=sysmalloc
+#MALLOC=smalloc
+#MALLOC=debugmalloc
+
+#I don't need any of these
+#EXTRALIBS=-lMallocDebug -lsys_s -lsocket -linet -lnsl -lseq
+#EXTRALIBS=-ldebug-malloc /usr/lib/debug/mallocmap.o /usr/lib/debug/malloc.o
+EXTRALIBS=
+OSFLAGS=
+
+# Don't change this line.  Define EXTRALIBS before this line if you
+# wish to add any libraries.
+LIBS=@LIBS@ $(EXTRALIBS)
+
+# define this to be -lresolv if your machine has it.
+# HP and NeXT don't have it.
+#RESOLV=-lresolv
+RESOLV=
+
+
+# not used yet
+INSTALL=@INSTALL@
+
+# uncomment UALARM if your machine is missing the ualarm() system call.
+# needed by HP, A/UX (Apple Mac), EP/IX (MIPS), Sequent Dynix/3, Ultrix
+#UALARM=ualarm.o
+
+SRCDIR=@srcdir@
+VPATH=@srcdir@
+
+# Set MUD_LIB to the directory which contains the mud data. Was formerly
+# defined in config.h !
+# This is just a dummy define, it is normally replaced by the script 'build'
+MUD_LIB = @MUD_LIB@
+
+#
+# Set BINDIR to the directory where you want to install the executables.
+# (note that the driver expectes the small master.c to be in this dir when
+# running in script mode)
+# This is just a dummy define, it is normally replaced by the script 'build'
+# if you can't run 'build' define this to the full pathname of your dir
+BINDIR = @BINDIR@
+
+#
+#use bison please, yacc doesn't always work good enough.
+#
+YACC=@YACC@
+YFLAGS=-d -v
+
+#
+#This program should compare 2 files and return an error if they are not alike.
+#
+CMP=@COMPARE@
+#CMP=diff -wh >/dev/null 2>/dev/null
+#CMP=cmp -s
+
+# If you don't have 'strchr', then add next flag to CFLAGS.
+# -Dstrchr=index -Dstrrchr=rindex
+#
+PROFIL=
+#PROFIL=-pg
+
+#
+#Enable warnings from the compiler, if wanted.
+#
+WARN=@WARN@
+#WARN=-W -Wunused -Wformat
+#WARN -Wunused -Wformat -Wuninitialized
+#WARN= -Wall -Wshadow -Dlint
+
+#add extra defines here
+DEF=
+
+# define this if you want (compiler) optimization enabled.
+# *WARNING* using high levels of optimization (e.g. -O3) can cause some
+# compilers to produce incorrect code.  If the driver is behaving
+# inexplicably, try using a lower level of optimization (or none).
+# Uncomment one or none of the following optimization lines.
+
+# -O should work with all compilers
+#OPTIMIZE=-O
+
+# -O2 can be used with most compilers though
+#OPTIMIZE=-O2
+
+# use with gcc
+#OPTIMIZE=-g -O2 -funroll-loops -fomit-frame-pointer
+
+# use for debug
+# OPTIMIZE=-g
+
+OPTIMIZE=@OPTIMIZE@
+
+# System V Release 4 (386/486)
+#OSFLAGS=-DSVR4
+
+DIRS=-DMUD_LIB='"$(MUD_LIB)"' -DBINDIR='"$(BINDIR)"'
+DEFINES=-DMALLOC_$(MALLOC) $(DEF) $(DIRS)
+
+PREFLAGS=-I. -I$(SRCDIR) $(DEFINES)
+CFLAGS=$(OSFLAGS) $(OPTIMIZE) $(WARN) $(PROFIL) $(PREFLAGS)
+
+CC=@CC@
+#CC=distribute gcc
+CPP=@CPP@
+
+LD=$(CC)
+LDFLAGS=$(CFLAGS)
+
+MAKE_FLAGS = "BINDIR=$(BINDIR)" "MUD_LIB=$(MUD_LIB)" "CC=$(CC)" "CFLAGS=$(OPTIMIZE) $(OSFLAGS)"
+
+# Add alloca.o if you don't have alloca() on your machine.
+# Add ualarm.o if you don't have ualarm() on your machine.
+#
+DRIVER_OBJ=lang.o las.o lex.o efuns.o list_efuns.o array_efuns.o \
+    main.o interpret.o simulate.o object.o backend.o array.o stralloc.o \
+    comm.o regexp.o mapping.o $(MALLOC).o call_out.o otable.o \
+    simul_efun.o sprintf.o mapping_efuns.o opcodes.o hash.o port.o \
+    more_hashes.o msort2.o fsort.o list.o save_objectII.o instrs.o \
+    math.o socket_efuns.o socket.o socket_ctrl.o socket_err.o \
+    operators.o patchlevel.o batch_efuns.o dbase.o dbase_efuns.o \
+    dynamic_buffer.o @ALLOCA@ @LIBOBJS@
+
+all: driver
+
+driver: $(DRIVER_OBJ) Makefile
+	-mv driver driver.old
+	-cat $(SRCDIR)/patchlevel.h
+	$(LD) $(LDFLAGS) $(DRIVER_OBJ) -o driver $(LIBS)
+
+.c.o:
+	@( echo $(CC) -c $(CFLAGS) -o $@ $< ; \
+	if $(CPP) $(CFLAGS) $(CPPFLAGS) -o $*.i $< ; then \
+	  if test -f $@ && $(CMP) $*.i $*.i~ ; then \
+	    echo Not recompiling $@ ; \
+	    touch $@ ; \
+	  else \
+	    if test -f "$*.i~" ; then rm $*.i~; fi ; \
+	    if $(CC) -c $(CFLAGS) -o $@ $*.i ; then \
+	      mv $*.i $*.i~ ;\
+	    else \
+	      exit $$? ;\
+	    fi ;\
+	  fi ;\
+	else \
+	  exit $$? ;\
+	fi ;\
+	) ;
+
+pure: $(DRIVER_OBJ) Makefile
+	-mv driver driver.old
+	-cat $(SRCDIR)/patchlevel.h
+	purify -free-queue-length=500 -inuse-at-exit=yes -chain-length=12 $(LD) $(LDFLAGS) $(DRIVER_OBJ) -o driver $(LIBS)
+
+do_script2:
+	#!/bin/sh
+	set -x
+	CC='$(CC)'
+	FLAGS='$(TMP_CFLAGS) -DMUD_LIB="$(MUD_LIB)" -DBINDIR="$(BINDIR)"'
+	CFLAGS2=$(OPTIMIZE) $(OSFLAGS)
+	export CC CFLAGS CFLAGS2
+
+do_script:
+	@$(MAKE) -n do_script2
+	@( D=`pwd`; \
+         cd $(SRCDIR); \
+         $(MAKE) -f $$D/Makefile 'CFLAGS=$$$$FLAGS' -n | sed "s;-target [^ ]*;;" | sed 's;^$(CC);$$CC;'  | sed 's;$(OPTIMIZE) $(OSFLAGS);$$CFLAGS;' \
+        )
+	@echo set +x
+
+script: Makefile
+	$(MAKE) do_script | grep -v '^make' >$(SRCDIR)/script
+	chmod +x $(SRCDIR)/script
+	
+export: script $(BINDIR)/test.lpc
+	find $(SRCDIR) -type f '(' -name '*~' -o -name '.*~' -o -name core -o -name '.nfs*' -o -name '#*#' ')' -print | xargs rm -f
+	find $(MUD_LIB) -type f '(' -name '*~' -o -name '.*~' -o -name core -o -name '.nfs*' -o -name '#*#' ')' -print | xargs rm -f
+	find $(BIN_DIR) -type f '(' -name '*~' -o -name '.*~' -o -name core -o -name '.nfs*' -o -name '#*#' ')' -print | xargs rm -f
+	-rm $(MUD_LIB)/*.debug.log
+	$(CC) $(CFLAGS) $(SRCDIR)/patch_level.c
+	( NAME=`./a.out 1` ;\
+           rm a.out ; \
+           cd $(SRCDIR)/../.. ; \
+           tar -cvf lpc4/$$NAME.tar lpc4/src/* lpc4/bin lpc4/doc lpc4/lib/*;\
+           rm -rf lpc4/$$NAME.tar.gz; \
+           gzip -9 lpc4/$$NAME.tar \
+        );
+#	( cd ../.. ; tar -cvf lpc4.tar lpc4/src/* lpc4/bin/* lpc4/lib/* lpc4/doc/*; rm -rf lpc4.tar.gz; gzip -9 lpc4.tar );
+
+patch:
+	$(CC) $(CFLAGS) $(SRCDIR)/patch_level.c
+	./a.out >$(SRCDIR)/patchlevel.h
+	-rm -f a.out
+	cat $(SRCDIR)/patchlevel.h
+
+list_funcs: func_spec.c config.h
+	$(CPP) $(PREFLAGS) $(SRCDIR)/func_spec.c >list_funcs
+
+differ_opcodes:
+	cp $(MUD_LIB)/opcode_statistics $(SRCDIR)/permanent_statistics
+	cp lang.h $(SRCDIR)/permanent_lang.h
+	rm efun_defs.c
+
+make_func.c: make_func.y
+	$(YACC) $(YFLAGS) $(SRCDIR)/make_func.y
+	mv y.tab.c make_func.c
+
+make_func: make_func.o port.o
+	$(CC) $(CFLAGS) make_func.o port.o -o make_func -lm
+
+make_func.o: config.h
+
+install: driver
+	install -c $? $(BINDIR)/lpc
+
+install.utils:
+	(cd util; $(MAKE) $(MAKE_FLAGS) install)
+
+utils:	
+	(cd util; $(MAKE) $(MAKE_FLAGS))
+
+parse: driver
+	-mv parse parse.old
+	cp driver parse
+
+lint: *.c
+	lint *.c
+
+lang.o: lang.c config.h object.h interpret.h exec.h instrs.h
+
+lang.h: lang.y
+	@echo "Expect 1 shift/reduce conflict."
+	$(YACC) $(YFLAGS) lang.y
+	mv y.tab.c lang.c
+	mv y.tab.h lang.h
+
+lang.c: lang.h
+	touch lang.c
+
+depend: lang.c
+	gcc -MM $(PREFLAGS) *.c $(SRCDIR)/*.c | sed 's;$(SRCDIR)/;;g' | sed 's;./;;g' >$(SRCDIR)/dependencies
+depend: dependencies
+
+tidy:
+	-rm -f *.o core $(MUD_LIB)/core y.output y.tab.c y.tab.h
+	-rm -f $(BINDIR)/core *.o *.i *.i~
+
+clean: tidy
+	-rm -f test.lpc
+	-rm -f lang.h lang.c efun_protos.h opc_cost.h make_func.pure_*
+	-rm -f efun_defs.c lang.y efun_defs func_spec base.h
+	-rm -f make_func.c $(MUD_LIB)/lpmud.log TAGS tags list_funcs
+	-rm -f yacc.acts yacc.debug yacc.tmp *.debug.log a.out
+
+spotless: clean
+	rm -f Makefile machine.h
+	find . -type f '(' -name '*~' -o -name '.*~' -o -name core -o -name '.nfs*' -name '#*#' ')' -print | xargs rm -f
+	find $(MUD_LIB) -type f '(' -name '*~' -o -name '.*~' -o -name core -o -name '.nfs*' -name '#*#' ')' -print | xargs rm -f
+	-rm -f lexical.c mon.out *.ln parse.old parse frontend frontend.c
+	-rm -f config.status driver driver.old make_func
+	-rm -f $(BINDIR)/driver $(BINDIR)/*~ $(BINDIR)/#*#
+	-rm -f $(MUD_LIB)/OBJ_DUMP $(MUD_LIB)/*.debug.log $(MUD_LIB)/gmon.out
+	-rm -f $(MUD_LIB)/log/* $(MUD_LIB)/opcode_statistics
+	-rm -f machines which_machine make_func
+	-rm -f .pure driver* l.outa* ../bin/WIZLIST WIZLIST
+	@(cd util ; echo "Cleaning in util." ; $(MAKE) clean)
+
+
+cp_machine:
+	cp ../machines machines
+	echo >which_machine 0
+
+frontend: comm2.o frontend.o
+	$(CC) $(CFLAGS) comm2.o frontend.o -o frontend $(LIBS)
+
+tags:
+	ctags *.c
+
+TAGS:
+	etags -t *.h *.c
+
+lang.y: make_func func_spec.c language.y config.h list_funcs \
+        permanent_statistics permanent_lang.h
+	./make_func list_funcs $(SRCDIR)/language.y lang.y efun_protos.h $(SRCDIR)/permanent_statistics $(SRCDIR)/permanent_lang.h opc_cost.h > efun_defs.c
+
+efun_protos.h: lang.y
+	touch efun_protos.h
+
+efunctions.h: lang.y
+	touch efun_protos.h
+
+efun_defs.c: lang.y
+	touch efun_defs.c
+
+opc_cost.h: lang.y
+	touch opc_cost.h
+
+efuns.h: lang.h
+
+configure: configure.in
+	cd $(SRCDIR) && autoconf
+     
+config.status: configure
+	./config.status --recheck
+
+Makefile: Makefile.in config.status
+	./config.status
+	touch Makefile machine.h
+	@echo Run make again.
+	@exit 1
+
+machine.h: machine.h.in config.status
+	./config.status
+	touch Makefile machine.h
+	@echo Run make again.
+	@exit 1
+
+$(BINDIR)/test.lpc: $(BINDIR)/make_lpc4_test
+	$(BINDIR)/make_lpc4_test >$(BINDIR)/test.lpc
+
+verify: $(BINDIR)/test.lpc driver
+	./driver -Cstay $(BINDIR)/test.lpc
+
+verbose_verify: $(BINDIR)/test.lpc driver
+	./driver -Cstay $(BINDIR)/test.lpc --verbose
+
+
+include @srcdir@/dependencies

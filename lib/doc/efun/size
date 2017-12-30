@@ -1,0 +1,14 @@
+NAME
+	size - return the 'size' of a value
+
+SYNTAX
+	int size(mixed v);
+
+DESCRIPTION
+	For strings it returns strlen(v), for arrays sizeof(v), for mappings
+	m_sizeof(v), for lists l_sizeof(v), for objects it returns some
+	magic number that shows storage in bytes, and it probably returns
+	something for ints as well.
+
+SEE ALSO
+	strlen, sizeof, m_sizeof, l_sizeof

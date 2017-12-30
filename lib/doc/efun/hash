@@ -1,0 +1,14 @@
+NAME
+	hash - return a hashvalue for a string
+
+SYNTAX
+	int hash(string str)
+	or
+	int hash(string str,int max)
+
+DESCRIPTION
+	Returns a positive value depending on the content of the string,
+	with the second syntax it returns a value less than max and greater
+	or equal to zero.
+
+	

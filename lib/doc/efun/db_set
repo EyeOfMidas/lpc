@@ -1,0 +1,13 @@
+NAME
+	db_set - set an entry from in a database
+
+SYNTAX
+	mixed db_set(string file, string index,string data);
+
+DESCRIPTION
+	Set the index index in the database file to data. If the database
+	was't there it will be created. If everything works out, 1 is
+	returned.
+
+SEE ALSO
+	db_get, db_delete, db_indices

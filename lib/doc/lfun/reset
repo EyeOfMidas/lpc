@@ -1,0 +1,13 @@
+NAME
+	reset - reset an object
+
+SYNTAX
+	void reset() { ... }
+
+DESCRIPTION
+	This function is called regularly in every object loaded. The time
+	between each called is defined in config.h in the driversource.
+	Normally it is between 20 minutes and 3 hours.
+
+SEE ALSO
+	create	

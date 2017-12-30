@@ -1,0 +1,14 @@
+NAME
+	query_verb - return the string that was typed
+
+SYNTAX
+	string query_verb();
+
+DESCRIPTION
+	Query verb does, despite it's name, return the whole string the
+	that was matched by the add_action that triggered this command.
+	It returns 0 if no command is executing. This enables add_action()
+	of several commands to the same function.
+
+SEE ALSO
+	add_action

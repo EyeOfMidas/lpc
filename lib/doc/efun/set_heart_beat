@@ -1,0 +1,16 @@
+NAME
+	set_heart_beat - enable or disable heartbeat in this object
+
+SYNTAX
+	int set_heart_beat(int flag);
+
+DESCRIPTION
+	Enable or disable heart beat. If the heart beat is not needed for
+	the moment, then do disable it. This will reduce system overhead.
+
+RETURN VALUES
+	0 if the state wasn't changed.
+	1 if the state was changed.
+
+SEE ALSO
+	lfun/heart_beat

@@ -1,0 +1,14 @@
+NAME
+	write - write a message
+
+SYNTAX
+	void write(mixed str);
+
+DESCRIPTION
+	Write a message str to current player. str can also be a number,
+	which will be translated to a string. If there is no this_player()
+	the message will be sent to stdout. Note that this just calls
+	catch_tell in this_player(), it doesn't 'send' it.
+
+SEE ALSO
+	lfun/catch_tell

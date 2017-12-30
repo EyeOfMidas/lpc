@@ -1,0 +1,18 @@
+NAME
+	hash_name - return the hash_name of an object
+
+SYNTAX
+	string hash_name(object o);
+
+DESCRIPTION
+	Returns the hash name of an object. find_object(hash_name(o))==o
+	is always true.
+
+NOTA BENE
+	Though the above statement is always true at all times it is not
+	certain that you can find an object that you stored the hash_name
+	of earlier as objects might change their names.
+
+SEE ALSO
+	file_name, hash_name, enter_obj_hash
+	

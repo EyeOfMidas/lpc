@@ -1,0 +1,13 @@
+NAME
+	get_function_list - get all functions from an object
+
+SYNTAX
+	function *get_function(object o);
+
+DESCRIPTION
+	Returns an array of functionpointers to all nonstatical functions in
+	the object o.
+
+SEE ALSO
+	call_function, get_function, add_simul_efun
+

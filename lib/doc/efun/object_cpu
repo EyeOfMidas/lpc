@@ -1,0 +1,12 @@
+NAME
+	object_cpu - return how many nodes an object has used
+
+SYNTAX
+	int object_cpu(object o);
+
+DESCRIPTION
+	Returns the number of eval nodes an object has used. Should be
+	roughly propotional to the cpu-time used.
+
+SEE ALSO
+	top_cpu

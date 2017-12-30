@@ -1,0 +1,12 @@
+NAME
+	db_indices - return an array with all indices in a database
+
+SYNTAX
+	string *db_indices(string file);
+
+DESCRIPTION
+	Returns an array of all index in a the database file. Returns
+	an integer on failiure.
+
+SEE ALSO
+	db_get, db_set, db_delete

@@ -1,0 +1,14 @@
+NAME
+	pluralize - attempt to pluralize a noun
+
+SYNTAX
+	string pluralize(string noun);
+
+DESCRIPTION
+	Try to return the plural form of a given noun. Doesn't always
+	work, but makes an acceptable 'default' for when no plural form
+	is given.
+
+NOTA BENE
+	Might not work very well with most languages except english.
+

@@ -1,0 +1,11 @@
+NAME
+	floor - round float downwards
+
+SYNTAX
+	float floor(float x);
+
+DESCRIPTION
+	Returns a float rounded down to nearest lower integer value.
+
+SEE ALSO
+	ceil

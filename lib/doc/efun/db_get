@@ -1,0 +1,14 @@
+NAME
+	db_get - get an entry from a database
+
+SYNTAX
+	mixed db_get(string file, string index);
+
+DESCRIPTION
+	If the index is present in the database file it is returned.
+	If the index isn't present zero is returned.
+	If the database isn't present it is created.
+	If something goes wrong a non-zero integer is returned.
+
+SEE ALSO
+	db_set, db_delete, db_indices

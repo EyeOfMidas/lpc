@@ -1,0 +1,13 @@
+NAME
+	heart_beat - a regularly called function
+
+SYNTAX
+	void heart_beat() { ... }
+
+DESCRIPTION
+	If an object calls set_heart_beat(1) then this function will be
+	called in that object regularly. (normally the delay is 2 seconds)
+	To stop the calling of heart_beat(), call set_heart_beat(0).
+
+SEE ALSO
+	efun/set_heart_beat

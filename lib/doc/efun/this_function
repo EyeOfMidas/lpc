@@ -1,0 +1,13 @@
+NAME	
+	this_function - return a functionpointer to the current function
+
+SYNTAX
+	function this_function();
+
+DESCRIPTION
+	Returns a functionpointer to the current function, useful for
+	making recursive lambda-functions.
+
+SEE ALSO
+	get_function, function_name, function_object
+

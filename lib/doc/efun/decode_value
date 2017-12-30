@@ -1,0 +1,19 @@
+NAME
+	decode_value - decode a string coded with code_value
+
+SYNTAX
+	mixed decode_value(string);
+
+DESCRIPTION
+	This is the inverse function of code_value, it takes a string that
+	was produced with code_value (or any string in the same format) and
+	decodes it and returns the value.
+
+BUGS
+	Functionpointers can not be decoded.
+	Objects can only be decoded if they have same hash_name as when
+	they were coded.
+
+SEE ALSO
+	code_value, save_object, restore_object
+	

@@ -1,0 +1,14 @@
+NAME
+	load - load a program into memory
+
+SYNTAX
+	int load(string file);
+
+DESCRIPTION
+	Load a program into memory, return 1 for success otheriwise 0.
+	Note that you have to clone the program in one way or another to
+	use it. Also note that if you clone an object from a program that
+	wasn't loaded it will try to load it anyway.
+
+SEE ALSO
+	clone_object, update, make_object

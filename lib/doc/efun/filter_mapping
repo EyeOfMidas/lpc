@@ -1,0 +1,13 @@
+NAME
+	filter_mapping - filter a mapping through a function
+
+SYNTAX
+	mapping filter_mapping(mapping map,function fun,mixed args...);
+	mapping filter_mapping(mapping map,string fun,mixed args...);
+	mapping filter_mapping(mapping map,-1,mixed args...);
+
+DESCRIPTION
+	Works exactly like filter_array, but works on a mapping.
+
+SEE ALSO
+	filter_array, map_mapping

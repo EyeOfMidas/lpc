@@ -1,0 +1,14 @@
+NAME
+	catch_tell - receive output
+
+SYNTAX
+	void catch_tell(string str) { ... }
+
+DESCRIPTION
+	catch_tell() is called now and then like this:
+	o write() calls it in this_player() if there is a this_player()
+	  (otherwise it writes to the drivers stdout)
+	o tell_room() calls it in every object in another object.
+
+SEE ALSO
+	efun/write, efun/tell_room

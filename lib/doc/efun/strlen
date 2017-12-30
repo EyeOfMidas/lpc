@@ -1,0 +1,11 @@
+NAME
+	strlen - return the length of a string
+
+SYNTAX
+	int sizeof(string str)
+
+DESCRIPTION
+	Returns the number of characters in a string.
+
+SEE ALSO
+	sizeof

@@ -1,0 +1,13 @@
+NAME
+	reset_eval_cost - reset eval cost to zero
+
+SYNTAX
+	void reset_eval_cost();
+
+DESCRIPTION
+	This function may only be called by objects that have the same euid
+	as the masterobjects uid. It resets the eval_node counter to zero
+	so that it may continue to run longer.
+
+SEE ALSO
+	set_max_eval_cost

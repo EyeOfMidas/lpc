@@ -1,0 +1,13 @@
+NAME
+	this_object - return this object
+
+SYNTAX
+	object this_object();
+
+DESCRIPTION
+	Return the object pointer of this object. This is not to be confused
+	with the internal name of an object, which is used by the id()
+	function.
+
+SEE ALSO
+	this_player

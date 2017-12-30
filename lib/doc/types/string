@@ -1,0 +1,18 @@
+NAME
+	string - a dynamic string type
+
+SYNTAX
+	"abcedefg"
+
+OPERATORS
+	[], [..], +, /, 
+	stringp, extract, explode, implode, sscanf, sprintf, strstr
+
+DESCRIPTION
+	Strings in lpc are similar to strings in basic. They are NOT an array
+	of 'char' as the type 'char' does not exist in lpc. They have an
+	unlimited size but can not contain zeros, as zero is used to mark the
+	end of the string. You can not set a character within a string like
+	this str[10]='a', but you can get a character from a string with
+	almost the same syntax: c=str[10];
+

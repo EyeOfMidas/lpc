@@ -1,0 +1,22 @@
+#!lpc -C
+
+int main(int argc, string *argv)
+{
+  int e,an,bn;
+  string *a,*b,f;
+
+  f=read_bytes(argv[1]);
+  a=f/"\n";
+
+  f=read_bytes(argv[2]);
+  b=f/"\n";
+
+  for(e=0;e<sizeof(a);e++)
+  {
+    an=bn=0;
+    sscanf(a[e],"%*d %*d %d",an);
+    sscanf(b[e],"%*d %*d %d",bn);
+    if(bn>an) a[e]=b[e];
+  }
+  write(a*"\n");
+}

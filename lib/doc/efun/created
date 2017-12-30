@@ -1,0 +1,11 @@
+NAME
+	created - return the timestamp of a clone
+
+SYNTAX
+	int created(object o);
+
+DESCRIPTION
+	Return when an object was cloned in seconds since 1970.
+
+SEE ALSO
+	object_cpu, file_stat

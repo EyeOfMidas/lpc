@@ -1,0 +1,21 @@
+NAME
+	make_object - compile a program
+
+SYNTAX
+	string make_object(string prog);
+
+DESCRIPTION
+	This function compiles the string given to it as if it had been a
+	file, and then return the name of the 'faked' file so that you
+	can clone objects from it.
+
+EXAMPLE
+	string a,b;
+	object c;
+	a="void create() { write("foo\n"); }\n";
+	b=make_object(a);
+	c=clone_object(b);
+	update(b);
+
+SEE ALSO
+	update, find_object, load

@@ -1,0 +1,27 @@
+NAME
+	zero_type - What kind of a zero is it?
+
+SYNTAX
+	int zero_type(mixed arg);
+
+DESCRIPTION
+	If you index a mapping and it returns zero, you can use this
+	efun to check weather it was a zero in the mapping or if the index
+	wasn't present.
+
+	It returns:
+		0 if it was a number
+		1 undefined, Depending on the value you are testing, 
+                  this can mean the following things:
+		  o it wasn't present in the mapping (mapping index)
+		  o there was no such call_out (find_call_out, remove_call_out)
+		2 if it was a destructed object
+		3 if it was a function in a destructed object
+		-1 if the argument is something other than a number
+
+NOTA BENE
+	The values 2 and 3 should only be used for debugging as those
+	might be changed in the future.
+
+SEE ALSO
+	stringp, pointerp, objectp, mappingp, functionp, floatp, intp

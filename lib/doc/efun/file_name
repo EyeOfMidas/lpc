@@ -1,0 +1,9 @@
+NAME
+	file_name - return the name of the file that defined an object
+
+SYNTAX
+	string file_name(object ob);
+
+DESCRIPTION
+	Get the file name of an object. Note that this driver returns the
+	file name, no #, no nothing just the filename.

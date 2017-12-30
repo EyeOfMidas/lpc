@@ -1,0 +1,14 @@
+NAME
+	is_equal - check if two values are equal
+
+SYNTAX
+	int is_equal(mixed a,mixed b);
+
+DESCRIPTION
+	Returns 1 if the two arguments are equal, note that they do not have
+	to be the same values, ie. if two arrays are compared, it is enough
+	that all their indexes are equal, they do not have to be the same
+	array, as is the case with ==.
+
+SEE ALSO
+	copy_value

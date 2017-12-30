@@ -1,0 +1,1034 @@
+#!/bin/sh
+
+#generates a script that is supposed to test a lpc4 driver.
+#note that not everything is tested yet, you are welcome to
+#submit more tests.
+
+GNU_M4=`echo "changequote([,])ifdef([__gnu__],yes,no)" | m4`
+if [ $GNU_M4 = "no" ]; then
+  echo "$0 requires GNU m4" 1>&2
+  exit 1
+fi
+
+
+m4 <<\EOTESTS
+#!lpc -Cstay
+define(IGNORE,
+changequote([[,]]) define(TESTNO,0)
+define(test_declare,[[   $1]];)
+define(testcomment,[[/* Test define([[TESTNO]],incr(TESTNO))TESTNO */
+    if(verbose) perror("Doing test TESTNO.\n");
+]])
+define(doquote,[[patsubst(patsubst($1,\\,\\\\),\",\\")]])
+define(test_do,[[    if(verbose)
+      perror("Doing patsubst($1,\",\\")\n");
+    $1;
+]])
+define(test_true,[[    testcomment()
+    if(_1=( $1 ))
+    {
+      if(verbose)
+        perror("Test TESTNO: doquote($1) succeded.\n");
+    }else{
+      perror("Test TESTNO: doquote($1) failed.\n"+
+             " => "+code_value(_1,1)+".\n");
+      errors++;
+    }
+]])
+
+define(test_eq,[[    testcomment()
+    if(( _1=( $1 ))==( _2=( $2 )))
+    {
+      if(verbose)
+        perror("Test TESTNO: doquote($1)==doquote($2) succeded\n");
+    }else{
+      perror("Test TESTNO: doquote($1)==doquote($2) failed\n"+
+             "expression 1 => "+code_value(_1,1)+".\n"+
+             "expression 2 => "+code_value(_2,1)+".\n");
+      errors++;      
+    }
+]])
+
+
+define(test_equal,[[   testcomment()
+   if(is_equal(_1=( $1 ),_2=( $2 )))
+   {
+     if(verbose)
+       perror("Test TESTNO: is_equal(doquote($1) , doquote($2)) succeded\n");
+   }else{
+     perror("Test TESTNO: is_equal(doquote($1) , doquote($2)) failed\n"+
+	    "expression 1 => "+code_value(_1,1)+".\n"+
+            "expression 2 => "+code_value(_2,1)+".\n");
+     errors++;      
+   }
+]])
+
+define(test_construct,[[   testcomment()
+   $1;
+    if(( _1=( $2 ))==( _2=( $3 )))
+    {
+      if(verbose)
+        perror("Test TESTNO: doquote($1); doquote($2)==doquote($3) succeded\n");
+    }else{
+      perror("Test TESTNO: doquote($1); doquote($2)==doquote($3) failed\n"+
+             "expression 1 => "+code_value(_1,1)+".\n"+
+             "expression 2 => "+code_value(_2,1)+".\n");
+      errors++;      
+    }
+]])
+
+
+)
+/* These have to be readable */
+#define EXISTINGFILE "/etc/passwd"
+#define EXISTINGDIRECTORY "."
+#define NONEXISTINGFILE "/a-non-existing-file.test"
+#define NONEXISTINGDIRECTORY "/a-non-existing-directory.test"
+#define EXISTINGENVIRONMENTVARIABLE "HOME"
+#define NONEXISTINGENVIRONMENTVARIABLE "non-existing-environment-variable"
+
+int call_out_test() { }
+void move(object o) { move_object(o); }
+
+void main(int argc,string *argv)
+{
+  int verbose;
+  int e,loops;
+  string s;
+  mixed tmp;
+  mixed _1,_2;
+
+  verbose=0;
+  loops=1;
+
+  for(e=1;e<argc;e++)
+  {
+     switch(argv[e])
+     {
+        case "-h":
+        case "--help":
+          perror("Usage: "+argv[0]+" [-v | --verbose] [-l<loops> | --loop=<loops]\n");
+          perror("       [-h | --help]\n");
+          exit(0);
+
+        case "-v":
+        case "--verbose":
+          verbose++;
+          break;
+
+        case "-l":
+        case "--loop":
+           sscanf(argv[e],"-%s",s);
+           sscanf(argv[e],"-l%s",s);
+           sscanf(argv[e],"oop=%s",s);
+           loops=(int)s;
+           if(!loops)
+              perror("Use -l<loops> or --loop=<loops>\n");
+           break;
+
+        default:
+          perror("Unnown argument "+argv[e]+" (try "+argv[0]+" --help for more info).\n");
+          break;
+     }
+  }
+
+  if(verbose)
+  {
+    write("This script is supposed to test the lpc4-driver.\n");
+    write("Start the tests.\n");
+
+    write("write() works.\n");
+    perror("perror() works.\n");
+  }
+
+  /* C-comment */
+  // C++ comment
+
+  int errors = 0;
+  object _ob;
+
+  while(loops--)
+  {
+dnl
+dnl Here starts the listing of actual tests
+dnl
+dnl This script is just a bunch of tests that are supposed to evaluate true.
+dnl the syntax is:
+dnl   test_true(<the test in lpc>) or
+dnl   test_eq(<expression 1>,<expression 2>)
+dnl   test_equal(<expression 1>,<expression 2>) // use is_equal to compare
+dnl 
+dnl If you want to eval something without testing you use:
+dnl   test_do(<lpc code>)
+dnl and to declare variables:
+dnl   test_declare(variable declarations)
+dnl
+dnl The far away goal is of coarse to be able to test every possible type of
+dnl argument to every possible efun but for now I settle to test most of the
+dnl efuns. Feel free to add tests as you can come up with them.
+dnl
+dnl No. This is not the first place to change anything if you have changed the
+dnl syntax of an efun or the argument.
+dnl * First change the documentation.
+dnl * Then issue another version of the driver so that everyone can run this
+dnl   script and see what is different.
+dnl
+dnl Dont use the variables errors and _ob here.
+dnl Remember that the target program will be much larger, don't overdo it.
+dnl
+
+dnl testing operators
+test_true(1)
+test_true(!0)
+test_true(!(!1))
+test_true(this_object())
+test_true(this_function())
+test_true(0.0)
+test_true(([]))
+test_true(({}))
+test_true((<>))
+
+test_equal(!"",0)
+
+test_true(1==1)
+test_true(!(1==2))
+test_true(this_object()==this_object())
+test_true(this_function()==main)
+test_true(2.0==2.0)
+test_true(({})==({}))
+
+test_true(({1})!=({1}))
+test_true(1!=2)
+test_true(!(1==2))
+
+define(test_cmp,[[
+test_true($1<$2)
+test_true(!($1>$2))
+test_true($2>$1)
+test_true(!($2<$1))
+test_true($1<=$2)
+test_true(!($1>=$2))
+test_true($2>=$1)
+test_true(!($2<=$1))
+test_true($2<=$2)
+test_true($1>=$1) ]])
+
+test_cmp(1,2)
+test_cmp(1.0,2.0)
+test_cmp("a","b")
+
+dnl string construction tests
+test_eq(16,"\20"[0])
+test_eq(16,"\020"[0])
+test_eq(255,"\377"[0])
+test_eq(4,'\4')
+test_true("\r"[0]!='r')
+test_eq("\r"[0],'\r')
+test_eq("\n"[0],'\n')
+
+test_eq(1+1,2)
+test_eq(1+(-2),-1)
+test_eq((-2)+(-2),-4)
+test_eq("hi"+"there","hithere")
+test_eq("human"+"number"+666,"humannumber666")
+test_eq("human"+("number"+666),"humannumber666")
+test_eq(("human"+"number")+666,"humannumber666")
+test_eq(("human"+"number")+666+111,"humannumber666111")
+test_eq("humannumber"+(666+111),"humannumber777")
+test_eq("a"+"b"+"c"+"d"+"e"+"f"+"g"+"h"+"i"+"j"+"k"+"l"+"m"+"n"+"o"+"p"+"q"+"r"+"s"+"t"+"u"+"v"+"x"+"y","abcdefghijklmnopqrstuvxy")
+test_eq(1.0+1.0,2.0)
+test_eq(1.0+(-1.0),0.0)
+test_eq((-1.0)+(-1.0),-2.0)
+test_equal(({1,2,3})+({4,5,6}),({1,2,3,4,5,6}))
+test_equal((<1,2,3,4>)+(<4,5,6>),(<1,2,3,4,4,5,6>))
+test_equal(([0:1,3:6])+([5:2,3:6]),([0:1,3:6,3:6,5:2]))
+
+test_eq(10-3,7)
+test_eq(3-10,-7)
+test_eq(10.0-3.0,7.0)
+test_eq(3.0-10.0,-7.0)
+test_eq("foobargazonk"-"o","fbargaznk")
+test_equal(({"foo","bar","gazonk"})-({"foo","gazonk"}),({"bar"}))
+test_equal((<"foo","bar","gazonk">)-(<"foo","gazonk">),(<"bar">))
+test_equal((["foo":3,"bar":4,"gazonk":5])-(["foo":3,"gazonk":8]),(["bar":4]))
+
+test_eq(3*4,12)
+test_eq(4*3,12)
+test_eq(2*2*2*2*2,32)
+test_eq(3.0*4.0,12.0)
+test_eq(4.0*3.0,12.0)
+test_eq(2.0*2.0*2.0*2.0*2.0,32.0)
+test_eq(({"foo","bar","gazonk"})*"-","foo-bar-gazonk")
+
+test_eq(12/3,4)
+test_eq(13/3,4)
+test_eq(14/3,4)
+test_eq(15/3,5)
+test_eq(12.0/3.0,4.0)
+test_eq(14.0/4.0,3.5)
+test_eq(15.0/3.0,5.0)
+test_equal("foo-bar-gazonk"/"-",({"foo","bar","gazonk"}))
+test_equal("foobargazonk"/"",({"f","o","o","b","a","r","g","a","z","o","n","k"}))
+
+test_eq(12%3,0)
+test_eq(13%3,1)
+test_eq(14%3,2)
+test_eq(15%3,0)
+test_eq(12.0 % 3.0,0.0)
+test_eq(13.0 % 3.0,1.0)
+test_eq(14.0 % 3.0,2.0)
+test_eq(14.5 % 3.0,2.5)
+test_eq(15.0 % 3.0,0.0)
+
+test_eq(0 && 1,0)
+test_eq(1 && 0,0)
+test_eq(0 && 0,0)
+test_eq(1 && 1,1)
+test_eq(78 && 1,1)
+test_eq(78 && 99,99)
+test_eq(78 && 99,99)
+
+test_eq(0 || 1,1)
+test_eq(1 || 0,1)
+test_eq(0 || 0,0)
+test_eq(1 || 1,1)
+test_eq(78 || 1,78)
+test_eq(78 || 0,78)
+
+test_eq(0 | 0,0)
+test_eq(1 | 1,1)
+test_eq(4 | 1,5)
+test_eq(1 | 9,9)
+test_equal( sort_array(({1,2,3,4,4}) | ({3,5,6})), ({1,2,3,4,4,5,6}))
+test_equal( (<4,5,6>) | (<5,5,5>), (<4,5,5,5,6>) )
+test_equal( ([-4:8,8:7]) | ([3:3,8:3]), ([-4:8,8:3,3:3]) )
+
+test_eq(0 & 0,0)
+test_eq(1 & 1,1)
+test_eq(4 & 1,0)
+test_eq(1 & 9,1)
+test_equal( ({1,2,3,4,4}) & ({3,5,6}), ({3}))
+test_equal( (<4,5,6>) & (<5,5,5>), (<5>) )
+test_equal( ([-4:8,8:7]) & ([3:3,8:3]), ([8:3]) )
+
+test_eq(0 ^ 0,0)
+test_eq(1 ^ 1,0)
+test_eq(4 ^ 1,5)
+test_eq(1 ^ 9,8)
+test_equal( ({1,2,3,4,4}) ^ ({3,5,6}), ({1,2,4,4,5,6}))
+test_equal( (<4,5,6>) ^ (<5,5,5>), (<4,5,5,6>) )
+test_equal( ([-4:8,8:7]) ^ ([3:3,8:3]), ([-4:8,3:3]) )
+
+test_eq(1<<0,1)
+test_eq(1<<1,2)
+test_eq(1<<10,1024)
+test_eq(5<<3,40)
+
+test_eq(9>>2,2)
+test_eq(1>>1,0)
+test_eq(1024>>10,1)
+test_eq(47>>3,5)
+
+test_true([[ tmp=2, (++tmp==3) && (tmp==3) ]])
+test_true([[ tmp=2, (tmp++==2) && (tmp==3) ]])
+test_true([[ tmp=2, (tmp--==2) && (tmp==1) ]])
+test_true([[ tmp=2, (--tmp==1) && (tmp==1) ]])
+
+test_eq("012345678"[3],'3')
+test_eq("012345678"[-3],'6')
+test_eq("012345678"[10],0)
+test_true([[ tmp="012", (tmp[1]++=='1') && (tmp=="022") ]])
+test_true([[ tmp="012", (++tmp[1]=='2') && (tmp=="022") ]])
+test_true([[ tmp="012", (--tmp[1]=='0') && (tmp=="002") ]])
+test_true([[ tmp="012", (tmp[1]--=='1') && (tmp=="002") ]])
+test_eq( ({0,1,2,3,4,5})[3],3 )
+test_eq( ({0,1,2,3,4,5})[-3],3 )
+test_eq( ([0:1,2:3,4:5])[3],0 )
+test_eq( ([0:1,2:3,4:5])[4],5 )
+test_true([[ tmp=([]), (tmp[1]++==0) && is_equal(tmp,([1:1]) ) ]])
+test_true([[ tmp=([]), (++tmp[1]==1) && is_equal(tmp,([1:1]) ) ]])
+test_true([[ tmp=([]), (tmp[1]--==0) && is_equal(tmp,([1:-1]) ) ]])
+test_true([[ tmp=([]), (--tmp[1]==-1) && is_equal(tmp,([1:-1]) ) ]])
+test_true([[ tmp=({0}), (tmp[0]++==0) && is_equal(tmp,({1}) ) ]])
+test_true([[ tmp=({0}), (++tmp[0]==1) && is_equal(tmp,({1}) ) ]])
+test_true([[ tmp=({0}), (tmp[0]--==0) && is_equal(tmp,({-1}) ) ]])
+test_true([[ tmp=({0}), (--tmp[0]==-1) && is_equal(tmp,({-1}) ) ]])
+
+test_equal( ({0,1,2,3,4})[-3..3], ({2,3}) )
+test_equal( ({0,1,2,3,4})[1..0], ({}) )
+test_equal( ({0,1,2,3,4})[1..3], ({1,2,3}) )
+test_equal( ({0,1,2,3,4})[3..10000], ({3,4}) )
+test_eq( "01234"[-3..3], "23" )
+test_eq( "01234"[1..0], "" )
+test_eq( "01234"[1..3], "123" )
+test_eq( "01234"[3..10000], "34" )
+
+test_true([[ tmp=({1,2,3}), ((tmp[1]=3)==3) && is_equal(tmp,({1,3,3})) ]])
+test_true([[ tmp="123", ((tmp[1]=3)==3) && is_equal(tmp,"1\0033") ]])
+test_true([[ tmp=(<>), ((tmp[1]=3)==3) && is_equal(tmp,(<1>)) ]])
+test_true([[ tmp=(<1>), ((tmp[1]=0)==0) && is_equal(tmp,(<>)) ]])
+test_true([[ tmp=([]), ((tmp[1]=3)==3) && is_equal(tmp,([1:3])) ]])
+test_true([[ tmp=([1:3]), ((tmp[1]=0)==0) && is_equal(tmp,([1:0])) ]])
+test_true([[ tmp="123", ((tmp[1]=0)==0) && strlen(tmp)==3 && tmp[0]=='1' && tmp[1]==0 && tmp[2]=='3']])
+test_true([[ tmp=([]), ((tmp[1]=tmp[2]=3)==3) && is_equal(tmp,([1:3,2:3])) ]])
+
+dnl - control structs
+dnl 'if-else' has already been tested.
+test_declare(int e)
+test_declare(string tmp)
+test_construct([[ for(tmp="",e=0;e<10;e++) tmp+=e ]],tmp,"0123456789")
+test_construct([[ for(tmp="",e=0;e>-10;e--) tmp+=e ]],tmp,"0-1-2-3-4-5-6-7-8-9")
+test_construct([[ tmp=""; e=0; do{ tmp+=e; }while(++e<6) ]],tmp,"012345")
+test_construct([[ tmp=""; e=0; while(++e<6) tmp+=e; ]],tmp,"12345")
+test_construct([[ tmp="fel"; switch(1) { case 1: tmp="r{tt"; default: } ]],tmp,"r{tt")
+test_construct([[ tmp="fel"; switch(1) { default: tmp="r{tt"; case 1: } ]],tmp,"fel")
+test_construct([[ tmp="fel"; switch(2) { default: tmp="r{tt"; case 1: } ]],tmp,"r{tt")
+test_construct([[ tmp=""; for(e=0;e<10;e++) switch(e) { default: tmp+=e; case 4..8: } ]],tmp,"01239")
+
+dnl - floatp
+test_eq(1,floatp(1.7))
+test_eq(0,floatp(7))
+dnl - stringp
+test_eq(1,stringp("hej"))
+test_eq(0,stringp(7))
+dnl v intp
+test_eq(1,intp(7))
+test_eq(0,intp("hej"))
+dnl - acos
+test_eq(((string)acos(0.7))[0..4],"0.795")
+dnl - actions_defined
+test_do(add_action("qul%s",lambda(){}))
+test_eq(0,query_actions(this_object(),this_object()))
+test_do(enable_commands())
+test_eq(0,sizeof(query_actions(this_object(),this_object())))
+test_do(add_action("foo%s",lambda(){}))
+test_eq(1,sizeof(query_actions(this_object(),this_object())))
+test_do(disable_commands())
+test_eq(0,query_actions(this_object(),this_object()))
+dnl ^ add_action
+dnl - add_worth, Not easy to test...
+dnl test_do(add_worth(100))
+dnl - add_simul_efun
+test_do(add_simul_efun("dump_malloc_data",lambda() { return 17; }))
+test_eq(clone_object(make_object("function tmp() { return dump_malloc_data(); }"))->tmp(),17)
+test_do(add_simul_efun("dump_malloc_data"))
+test_true(stringp(clone_object(make_object("function tmp() { return dump_malloc_data(); }"))->tmp()))
+
+dnl - all_inventory
+test_equal(({}),all_inventory(this_object()))
+test_do(move_object(master()))
+test_eq(1,sizeof(all_inventory(master())))
+test_eq(this_object(),all_inventory(master())[0])
+dnl - sizeof
+test_true(sizeof(({ 1, 2, })))
+test_eq(2,sizeof(({ 2, 3, })))
+test_eq(7,sizeof(allocate(7)))
+test_true(pointerp(allocate(3,4)[1]))
+dnl - allocate
+test_eq(17,sizeof(allocate(17)))
+test_eq(42,sizeof(allocate(17,42)[1]))
+dnl - array_of_index
+test_true(pointerp(array_of_index(allocate(3,4),2)))
+dnl - asin
+test_true(floatp(asin(0.7)))
+test_eq(asin(0.0),0.0)
+dnl - atan
+test_true(floatp(atan(0.7)))
+test_eq("3.1415",((string)(4.0*atan(1.0)))[0..5])
+dnl - break_point
+test_do(break_point())
+dnl - call_function
+test_eq("foobar",call_function(lambda() { return "foobar"; }))
+dnl - call_out_info
+test_eq(0,sizeof(call_out_info()))
+dnl - call_out
+test_do(call_out(call_out_test,7))
+test_true(4<find_call_out(call_out_test))
+test_eq(1,sizeof(call_out_info()))
+test_true(pointerp(call_out_info()[0]))
+test_true(intp(call_out_info()[0][0]))
+test_true(objectp(call_out_info()[0][1])||(0==call_out_info()[0][1]))
+test_true(functionp(call_out_info()[0][2]))
+test_eq(3,sizeof(call_out_info()[0]))
+dnl - capitalize
+test_eq(capitalize("hej"),"Hej")
+dnl - catch
+dnl something not catched
+test_eq(0,catch(1+2))
+dnl something catched
+test_true(stringp(catch(0->hej())))
+test_eq("hej",catch(throw("hej")))
+dnl error messages
+test_eq("*Bad argument 1 to get_function()\n",catch(0->hej()))
+dnl do:write(catch(0->hej()))
+test_declare(int zero)
+test_declare(int oneperzero)
+test_do(zero=0)
+dnl do:write(catch(1/zero))
+test_eq("*Division by zero\n",catch(oneperzero=1/zero))
+dnl
+dnl - cd
+test_eq(0,cd(EXISTINGDIRECTORY))
+test_true(cd(NONEXISTINGDIRECTORY))
+dnl - ceil
+test_true(floatp(ceil(0.7)))
+dnl - clone_number
+test_true(intp(clone_number(this_object())))
+dnl - clone_object
+test_eq(4711,clone_object(make_object("int a(){return 4711;}"))->a())
+dnl v code_value
+test_true(stringp(code_value(this_object())))
+dnl - command
+test_true(intp(command("hej")))
+test_true(intp(command("hej",this_object())))
+dnl v copy_value
+dnl - cos
+test_true(floatp(cos(1.7)))
+dnl - created
+test_true(intp(created(this_object())))
+test_true(created(this_object())<=time())
+dnl - crypt
+test_true(stringp(crypt("hej",0)))
+test_true(stringp(crypt("hej","//")))
+test_eq(tmp=crypt("hej",0),crypt("hej",tmp))
+dnl - ctime
+test_true(stringp(ctime(7483291)))
+test_true(stringp(ctime(time())))
+dnl
+dnl - rm
+dnl The testing of rm is done before the database stuff. We need to use it here.
+test_do(rm("test-database"))
+test_eq(0,rm("test-database"))
+dnl
+dnl database
+dnl v db_delete
+dnl v db_get
+dnl - db_indices
+test_true(pointerp(db_indices("test-database")))
+dnl - db_get
+test_eq(0,db_get("test-database","hej"))
+test_true(pointerp(db_indices("test-database")))
+test_eq(1,rm("test-database"))
+dnl - db_set
+test_eq(1,db_set("test-database","hej","hoj"))
+test_true(pointerp(db_indices("test-database")))
+test_eq(1,sizeof(db_indices("test-database")))
+test_eq("hej",db_indices("test-database")[0])
+test_eq("hoj",db_get("test-database","hej"))
+dnl - db_delete
+test_eq(1,db_delete("test-database","hej"))
+test_eq(0,sizeof(db_indices("test-database")))
+test_do(rm("test-database"))
+dnl now two databases
+test_eq(1,db_set("test-database1","hej","hoj"))
+test_eq(1,db_set("test-database2","hej","hij"))
+test_eq("hej",db_indices("test-database1")[0])
+test_eq("hoj",db_get("test-database1","hej"))
+test_eq("hij",db_get("test-database2","hej"))
+test_eq(1,db_delete("test-database2","hej"))
+test_eq(0,db_get("test-database2","hej"))
+test_eq("hoj",db_get("test-database1","hej"))
+test_eq(0,db_get("test-database2","hej"))
+test_do(rm("test-database1"))
+test_do(rm("test-database2"))
+
+dnl - debug_info
+test_true(stringp(debug_info(0,this_object())))
+test_true(stringp(debug_info(1,this_object())))
+
+dnl - is_equal
+test_equal(7,7)
+test_equal("hej","hej")
+test_true(!is_equal("hej","hej2"))
+test_equal(({1,"hej",}),({1,"hej"}))
+test_true(!is_equal(({7,"hej",}),({7.1,"hej"})))
+dnl
+dnl - decode_value
+dnl This test is strange since the format string=>anything is not guaranteed.
+dnl What is garanteed is that decode_value and code_value are inverses
+dnl (and that code_value returns a string but that is tested above).
+test_eq(7,decode_value(code_value(7)))
+test_eq(7.0,decode_value(code_value(7.0)))
+test_eq(7.1,decode_value(code_value(7.1)))
+test_eq(this_object()->main,decode_value(code_value(this_object()->main)))
+test_eq(this_object(),decode_value(code_value(this_object())))
+test_eq("hej",decode_value(code_value("hej")))
+test_declare(mixed * arr = ({ 1, 7.1, 7.0, "hej", this_object()->main, }))
+test_equal(arr,decode_value(code_value(arr)))
+test_declare(mapping map = ([ ]))
+test_do(map[1]="ett", map["sju"]=7, map["sjukommanoll"]=7.0)
+test_do(map[this_object()->main]="main", map[arr]="en array", map["arrayen"]=arr)
+test_equal(map,map)
+dnl - copy_value
+test_declare(mapping map2 = copy_value(map))
+test_equal(map,map2)
+test_true(map!=map2)
+test_do(map2["skiljeelement"]=18)
+test_true(!is_equal(map,map2))
+test_equal(map,decode_value(code_value(map)))
+dnl
+dnl v destruct
+dnl dump-functions
+dnl - dump_heart_beat_data
+test_true(stringp(dump_heart_beat_data(0)))
+test_true(stringp(dump_heart_beat_data(1)))
+dnl - dump_index_table_data
+test_true(stringp(dump_index_table_data(0)))
+test_true(stringp(dump_index_table_data(1)))
+dnl - dump_malloc_data
+test_true(stringp(dump_malloc_data()))
+dnl - dump_opt_status
+dnl test:stringp(dump_opt_status())
+dnl - dump_prog_table_data
+test_true(stringp(dump_prog_table_data(0)))
+test_true(stringp(dump_prog_table_data(1)))
+dnl - dump_socket_status
+test_true(stringp(dump_socket_status()))
+dnl - dump_string_data
+test_true(stringp(dump_string_data(0)))
+test_true(stringp(dump_string_data(1)))
+dnl - dumpallobj
+dnl Really?
+test_true(stringp(dumpallobj()))
+dnl v enable_commands
+dnl - environment
+test_eq(environment(),environment(this_object()))
+test_do(move_object(master()))
+test_eq(environment(),master())
+dnl - exit , Perhaps some fork/exit stuff here?
+dnl - exp
+test_true(floatp(exp(1.7)))
+dnl
+dnl - explode
+dnl hur m}nga tester orkar jag skriva?
+test_equal(({"a","b","c",}), explode("anna bnna c","nna "))
+test_equal(({"","",}),explode("hej","hej"))
+test_equal(({"",}),explode("","hej"))
+dnl
+dnl - export_uid
+dnl - file_length
+test_true(intp(file_length(EXISTINGFILE)))
+dnl test:file_length(NONEXISTINGFILE)
+dnl - file_name
+test_true(stringp(file_name(this_object())))
+dnl - file_size
+test_true(intp(file_size(EXISTINGFILE)))
+test_true(intp(file_size(NONEXISTINGFILE)))
+dnl - file_stat
+test_true(pointerp(file_stat(EXISTINGFILE)))
+test_eq(5,sizeof(file_stat(EXISTINGFILE)))
+test_true(intp(file_stat(EXISTINGFILE)[0]))
+test_true(intp(file_stat(EXISTINGFILE)[1]))
+test_true(intp(file_stat(EXISTINGFILE)[2]))
+test_true(intp(file_stat(EXISTINGFILE)[3]))
+test_true(intp(file_stat(EXISTINGFILE)[4]))
+dnl - filter_array
+test_equal(({"a","b"}),filter_array(({"a","b",0,0,0}),lambda(mixed a){return a;}))
+test_declare(object foo_o=clone_object(make_object("mixed foo(mixed a ){ return ({\"a\",\"b\"}); }")))
+test_declare(function o_foo=foo_o->foo)
+test_equal(({foo_o}),filter_array(({foo_o,0,""}),"foo"))
+test_equal(({o_foo}),filter_array(({o_foo,0,""}),-1))
+dnl - filter_mapping
+test_equal((["a":"b"]),filter_mapping((["a":"b",0:0]),lambda(mixed a){return a;}))
+test_equal(({foo_o}),m_values(filter_mapping((["a":foo_o,0:""]),"foo")))
+test_equal(({o_foo}),m_values(filter_mapping((["a":o_foo,0:""]),-1)))
+
+dnl ^ find_call_out
+dnl - first_inventory
+test_eq(first_inventory(master()),this_object())
+test_eq(first_inventory(this_object()),0)
+dnl ^ floatp
+dnl - floor
+test_true(floatp(floor(17.7)))
+dnl - function_args
+test_eq(2,function_args(lambda(int a,int b) {}))
+dnl - function_exists
+test_true(stringp(function_exists("main",this_object())))
+test_eq(0,function_exists("nonexistingfunction",this_object()))
+dnl - function_name
+test_eq("main",function_name(this_object()->main))
+dnl - function_object
+test_true(objectp(function_object(this_object()->main)))
+dnl - functionp
+test_true(functionp(this_object()->main))
+test_true(!functionp(7))
+test_true(!functionp("hej"))
+test_true(!functionp(({this_object(),"main",})))
+dnl - fuzzymatch
+test_true(intp(fuzzymatch("foo","bar")))
+test_eq(fuzzymatch("foo bar","gazonk"),fuzzymatch("gazonk","foo bar"))
+test_eq(fuzzymatch("foo","foo"),100)
+test_eq(fuzzymatch("FOO","foo"),0)
+dnl - gauge
+test_true(intp(gauge(1)))
+dnl - gc
+test_do(gc(0))
+test_do(gc(4711))
+dnl - get_dir
+test_true(pointerp(get_dir(EXISTINGDIRECTORY)))
+dnl - get_function
+test_eq(this_object()->main,get_function(this_object(),"main"))
+test_true(!this_object()->nonexistingfunction)
+test_true(!get_function(this_object(),"nonexistingfunction"))
+dnl - get_function_list
+dnl - get_varargs
+dnl - getchar
+dnl - getcwd
+test_true(stringp(getcwd()))
+dnl - getenv
+test_true(stringp(getenv(EXISTINGENVIRONMENTVARIABLE)))
+test_eq(0,(getenv(NONEXISTINGENVIRONMENTVARIABLE)))
+dnl - gets
+dnl - getuid
+test_true(stringp(getuid(this_object())))
+dnl - geteuid
+test_true(stringp(geteuid(this_object())))
+test_eq(geteuid(this_object()),getuid(this_object()))
+dnl - hash
+test_true(intp(hash("alskdf")))
+test_eq(hash(implode(({"a","b"}),"")),hash(lower_case("Ab")))
+dnl - hash_name
+test_true(stringp(hash_name(this_object())))
+dnl ^ implode
+dnl - indices
+test_equal(indices((< "a","b">)),indices((["a":0,"b":1])))
+dnl - inherit_list
+test_true(pointerp(inherit_list()))
+dnl - initiating_object
+test_eq(master(),initiating_object())
+dnl ^ intp
+dnl ^ is_equal
+dnl - l_delete
+test_declare(list test_list=(<>))
+test_true(test_list["a"]=1)
+test_true(test_list["a"])
+test_eq(l_sizeof(test_list),1)
+test_true(listp(l_delete(test_list,"a")))
+test_true(!test_list["a"])
+test_eq(l_sizeof(test_list),0)
+dnl ^ l_sizeof
+dnl - listp
+test_eq(1,listp((<>)))
+test_eq(0,listp((mixed)""))
+dnl - living
+test_do(enable_commands())
+test_true(living(this_object()))
+test_do(disable_commands())
+test_true(!living(this_object()))
+dnl - load
+test_true(load(file_name(this_object())))
+test_true(update(file_name(this_object())))
+test_true(!update(file_name(this_object())))
+test_true(load(file_name(this_object())))
+dnl - log
+test_true(floatp(log(5.0)))
+dnl - lower_case
+test_eq("hello",lower_case("hellO"))
+dnl - m_cleanup
+test_equal( m_cleanup(([5:3,6:0,7:8])), ([5:3,7:8]))
+dnl - m_delete
+test_equal( m_delete(([5:3,6:0,7:8]),6), ([5:3,7:8]))
+dnl - m_get_default
+test_eq( m_get_default(([5:3,6:0,7:8])), 0)
+test_eq( m_get_default(m_set_default(([5:3,6:0,7:8]),99)),99)
+dnl - m_indices
+test_equal( sort_array(m_indices(([5:3,6:0,7:8]))), ({5,6,7}))
+dnl - m_list
+test_equal( m_list(([5:3,6:0,7:8])), (<5,6,7>))
+dnl - m_set_default
+test_equal( m_cleanup(m_set_default(([5:3,6:0,7:8]),8)),([5:3,6:0]))
+dnl - m_sizeof
+test_eq( m_sizeof(([5:3,6:0,7:8])), 3)
+dnl - m_values
+test_equal( sort_array(m_values(([5:3,6:0,7:8]))), ({0,3,8}))
+dnl ^v make_object
+dnl v map_array
+dnl - map_mapping
+dnl  Dont blame Prof. for this.
+test_equal(({"a","b",0,0,0}),map_array(({"a","b",0,0,0}),lambda(mixed a){return a;}))
+test_declare(object oo_o=clone_object(make_object("mixed foo(mixed a ){ return ({\"a\",\"b\"}); }")))
+test_declare(function o_oo=oo_o->foo)
+test_equal(({({"a","b"}),0,0}),map_array(({oo_o,0,""}),"foo"))
+test_equal(({({"a","b"}),0,0}),map_array(({o_oo,0,""}),-1))
+dnl - filter_mapping
+test_equal((["a":"b",0:0]),map_mapping((["a":"b",0:0]),lambda(mixed a){return a;}))
+test_equal(([ "a": ({"a","b"}),0:0]),map_mapping((["a":foo_o,0:""]),"foo"))
+test_equal(([ "a": ({"a","b"}),0:0]),map_mapping((["a":o_foo,0:""]),-1))
+dnl ^ mappingp
+dnl ^v master
+dnl - member_array
+test_eq(-1,member_array("Nope",({ "Yes", "True", "Certainly" })))
+test_eq(1,member_array("True",({ "Yes", "True", "Certainly" })))
+dnl - mkdir
+test_eq(0,rmdir("I_hope"))
+test_do(mkdir("I_hope"))
+test_eq(-2,file_size("I_hope"))
+test_eq(1,rmdir("I_hope"))
+test_eq(-1,file_size("I_hope"))
+
+dnl - mkmapping
+test_true(mappingp(mkmapping(({"a","b"}),allocate(100))))
+test_eq(2,m_sizeof(mkmapping(({"a","b"}),allocate(100))))
+dnl ^ move_object
+dnl - next_clone
+test_do(oo_o=clone_object(file_name(this_object())))
+test_do(foo_o=clone_object(file_name(this_object())))
+test_true(next_clone(oo_o)==foo_o || next_clone(foo_o)==oo_o)
+test_eq(3,lambda() { int e; object o; for(o=next_clone(file_name(this_object()));o;o=next_clone(o)) e++; return e; }())
+test_do(destruct(oo_o))
+test_true(this_object()==next_clone(file_name(this_object())) || foo_o==next_clone(file_name(this_object())))
+
+dnl - next_inventory
+test_do(foo_o->move(master()))
+test_eq(next_inventory(foo_o),this_object())
+test_eq(next_inventory(this_object()),0)
+test_do(destruct(foo_o))
+
+dnl - object_cpu
+test_true(intp(object_cpu(this_object())))
+
+dnl - objectp
+test_true(objectp(this_object()))
+
+dnl - perror
+test_do(perror(""))
+dnl - pointerp
+test_true(pointerp(({})))
+test_true(!pointerp(0))
+dnl - popen
+test_true(stringp(popen("echo hello")))
+dnl - pow
+test_eq(pow(10.0,10.0),10000000000.0)
+dnl - previous_object
+test_eq(master(),previous_object())
+dnl - previous_objects
+test_true(pointerp(previous_objects()))
+test_equal(previous_objects(),({master()}))
+dnl - putenv
+#if efun(putenv)
+test_do(putenv("foo=bar"))
+test_eq(getenv("foo"),"bar")
+#endif
+
+dnl - query_host_name
+test_true(stringp(query_host_name()))
+dnl - query_load_average
+test_true(stringp(query_load_average()))
+dnl - query_num_arg
+test_true(intp(query_num_arg()))
+dnl - query_verb
+test_eq(query_verb(),0)
+dnl - random
+test_true(intp(random(1000)))
+test_true(-1==search_array(allocate(1000),lambda() { return random(1000)>=1000; }))
+dnl - read_bytes
+dnl - read_file
+dnl - regexp
+test_declare(string * regtest= ({ "a","bar","suck","nope","japp" }))
+dnl darn m4.....
+undefine([[regexp]])
+test_equal(regexp(regtest,"."),regtest)
+test_equal(regexp(regtest,"^a"),({"a"}))
+test_equal(regexp(regtest,"^.a"),({"bar","japp"}))
+test_equal(regexp(regtest,"a|s"),({"a","bar","suck","japp"}))
+test_equal(regexp(regtest,"no"),({"nope"}))
+
+dnl - remove_call_out
+test_true(!zero_type(remove_call_out(call_out_test)))
+test_true(1==zero_type(find_call_out(call_out_test)))
+dnl - rename
+test_do(write_file("test_file",""))
+test_do(rename("test_file","file_test"))
+test_eq(-1,file_size("test_file"))
+test_eq(0,file_size("file_test"))
+test_do(rm("file_test"))
+dnl - replace
+test_eq(replace("foobargazonk","o","-"),"f--bargaz-nk")
+test_eq(replace("foobargazonk",({"o","a"}),({"()","<>"})),"f()()b<>rg<>z()nk")
+test_eq(replace("foobarfoo",({"foo","foobar"}),({"foobar","foo"})),"foofoobar")
+test_eq(replace("foobarfoo",({"foobar","foo"}),({"foo","foobar"})),"foofoobar")
+test_equal(replace(({1,2,3,4,5,1,2,3,4}),3,-1),({1,2,-1,4,5,1,2,-1,4}))
+dnl - reset_eval_cost
+test_true(gauge(reset_eval_cost())<0)
+dnl - restore_object
+test_do(restore_object(""))
+dnl ^ rm
+dnl ^ rmdir
+dnl - rusage
+test_true(pointerp(rusage()))
+test_true(intp(rusage()[0]))
+test_true(intp(rusage()[1]))
+test_true(intp(rusage()[2]))
+test_eq(-1,search_array(rusage(),lambda(int arg) { return !intp(arg); }))
+dnl - save_object
+test_true(stringp(save_object()))
+dnl - search_array
+test_eq(5,search_array(({0,1,2,3,4,5}),lambda(int x) { return x==5; }))
+test_eq(3,search_array(({0,1,2,3,4,5}),lambda(int x) { return x==3; }))
+test_eq(-1,search_array(({0,1,2,3,4,5}),lambda(int x) { return x==8; }))
+dnl - set_heart_beat
+test_eq(0,set_heart_beat(0))
+test_eq(1,set_heart_beat(1))
+test_eq(0,set_heart_beat(1))
+test_eq(1,set_heart_beat(0))
+dnl - set_max_eval_cost
+dnl - set_socket_close
+dnl - set_socket_mode
+dnl - set_socket_read
+dnl - set_socket_write
+dnl - set_this_player
+dnl - seteuid
+dnl - shutdown
+dnl - sin
+test_true(floatp(sin(1.2)))
+test_eq(((string)sin(atan(1.0)))[0..4],"0.707")
+dnl - size
+test_eq(size(arr),sizeof(arr))
+test_eq(0,intp(([])))
+test_true(intp(size(this_object())))
+dnl ^ sizeof
+dnl - sleep
+test_do(sleep(1))
+dnl - socket_accept
+dnl - socket_acquire
+dnl - socket_address
+dnl - socket_bind
+dnl - socket_close
+dnl - socket_connect
+dnl - socket_create
+dnl - socket_error
+dnl - socket_listen
+dnl - socket_release
+dnl - socket_write
+dnl - solidify_mapping
+test_equal(solidify_mapping(([1:1,1:1,1:1,4:0,4:0,8:9])),([1:({1,1,1}),4:({0,0}),8:({9})]))
+dnl - sort_array
+test_equal(({1,4,5,7,7,10,11}),sort_array(({7,1,10,5,7,11,4})))
+test_equal(({"a","b","c","cd"}),sort_array(({"b","cd","a","c"})))
+test_equal(({"cd","c","b","a"}),sort_array(({"b","cd","a","c"}),lambda(string a,string b) { if(a<b) return 1; }))
+dnl - sprintf
+test_true(stringp(sprintf("")))
+test_eq(sprintf("%d",1),"1")
+test_eq(sprintf("%%"),"%")
+test_eq(sprintf("%d",1),"1")
+test_eq(sprintf("%d",-1),"-1")
+test_eq(sprintf("%u",1<<31),"2147483648")
+test_eq(sprintf("%o",255),"377")
+test_eq(sprintf("%x",255),"ff")
+test_eq(sprintf("%X",255),"FF")
+test_eq(sprintf("%c",255),"\377")
+test_true(stringp(sprintf("%f",255.0)))
+test_true(stringp(sprintf("%g",255.0)))
+test_true(stringp(sprintf("%e",255.0)))
+test_true(stringp(sprintf("%e",255.0)))
+test_eq(sprintf("%s","foobar"),"foobar")
+test_eq(sprintf("%s","foo\nbar"),"foo\nbar")
+test_true(stringp(sprintf("%O",this_object())))
+test_true(stringp(sprintf("%O",({}))))
+test_true(sprintf("%D",this_object()),code_value(({})))
+test_true(sprintf("%D",({})),code_value(({})))
+test_eq(sprintf("%n"),"")
+test_eq(sprintf("%t",1),"int")
+test_eq(sprintf("%t",this_object()),"object")
+test_eq(sprintf("%{%d\n%}",({1,2,3,4})),"1\n2\n3\n4\n")
+
+test_eq(sprintf("%2d",1)," 1")
+test_eq(sprintf("%2d",1)," 1")
+test_eq(sprintf("%2d",2222),"2222")
+test_eq(sprintf("%!2d",2222),"22")
+test_eq(sprintf("%!!2d",2222),"2222")
+test_eq(sprintf("% d",2)," 2")
+test_eq(sprintf("% d",-2),"-2")
+test_eq(sprintf("%+d",2),"+2")
+test_eq(sprintf("%+d",-2),"-2")
+test_eq(sprintf("%-2d",2),"2 ")
+test_eq(sprintf("%|3d",2)," 2 ")
+test_eq(sprintf("%-=3s","f o bar gaz"),"f o\nbar\ngaz")
+dnl test_eq(sprintf("%/3s","f o bargaz"),"f o\nbar\ngaz")
+dnl test_true(stringp(sprintf("%3#s","f\no\nbargaz\nonk")))
+dnl test_true(stringp(sprintf("%3$s","f\no\nbargaz\nonk")))
+test_eq(sprintf("%*d",3,3),"  3")
+test_eq(sprintf("%'FOO'10s","BAR"),"FOOFOOFBAR")
+test_eq(sprintf("%d %<d %<d",2),"2 2 2")
+dnl . : and ; hasn't been tested
+dnl ^, @ and _ hasn't been tested yet
+
+dnl - sqrt
+test_eq(4,sqrt(16))
+test_eq(4,sqrt(17))
+test_eq(4,sqrt(24))
+test_eq(4.0,sqrt(16.0))
+dnl - sscanf
+dnl - stringp
+test_true(stringp(""))
+dnl - strlen
+test_eq(5,strlen("12345"))
+test_eq(0,strlen(""))
+dnl - strstr
+test_eq(strstr("gurka zombie banan","gurka"),0)
+test_eq(strstr("gurka zombie banan","zomb"),6)
+test_eq(strstr("gurka zombie banan","ba"),13)
+test_eq(strstr("gurka zombie banan","foobar"),-1)
+dnl - sum_arrays
+test_equal(sum_arrays(lambda(int a,int b,int c) { return a+b+c; },({1,2,3,4}),({2,3,4,5}),({3,4,5,6})),({6,9,12,15}))
+dnl - sum_mappings
+dnl - tan
+test_true(floatp(tan(0.5)))
+test_eq(0.5,tan(atan(0.5)))
+test_eq(0.5,atan(tan(0.5)))
+dnl - this_function
+test_eq("main",function_name(this_function()))
+dnl - this_object
+test_true(objectp(this_object()))
+dnl - this_player
+test_true(!this_player())
+test_do(enable_commands())
+test_eq(this_object(),this_player())
+test_do(disable_commands())
+test_true(!this_player())
+dnl - throw
+dnl - time
+test_true(intp(time()))
+dnl - top_cpu
+test_true(pointerp(top_cpu()))
+test_eq(-1,search_array(top_cpu(),lambda(mixed x) { return !objectp(x); }))
+dnl ^ update
+dnl - upper_case
+test_eq("HEJ",upper_case("hEj"))
+dnl - version
+test_true(stringp(version()))
+dnl - write
+test_do(write(""))
+dnl - write_bytes
+dnl - write_file
+dnl - zero_type
+test_eq(0,zero_type(0))
+test_eq(1,zero_type(([])[10]))
+test_eq(0,zero_type(([0:0])[0]))
+test_declare(object test_ob)
+test_declare(function test_fun)
+test_eq(1,objectp(test_ob=clone_object(make_object("void foo() {}"))))
+test_eq(1,functionp(test_fun=test_ob->foo))
+test_do(destruct(test_ob))
+test_eq(1,intp(test_ob))
+test_eq(1,intp(test_fun))
+test_eq(2,zero_type(test_ob))
+test_eq(3,zero_type(test_fun))
+
+dnl list of tests finished.
+
+    if(verbose)
+    {
+      if(errors)
+      {
+        write(errors+" test(s) failed.\n");
+      }else{
+        write("Test completed without errors.\n");
+      }
+    }
+  }
+  if(errors) exit(errors); else shutdown();
+}
+EOTESTS
+
+

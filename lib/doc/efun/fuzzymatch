@@ -1,0 +1,14 @@
+NAME
+	fuzzymatch - return approximately how equal two strings are
+
+SYNTAX
+	int fuzzymatch(string a,string b);
+
+DESCRIPTION
+	Returns a percentage value representing how alike the strings a and b
+	are. It only looks on characters, no sound-comparing is done.
+	fuzzymatch(a,b) is always equal to fuzzymatch(b,a)
+
+SEE ALSO
+	hash
+	

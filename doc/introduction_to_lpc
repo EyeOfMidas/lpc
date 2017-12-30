@@ -1,0 +1,229 @@
+
+		Introduction to LPC4
+            Written by Fredrik Hubinette
+
+
+LPC is a dynamic, MUD-oriented language with a syntax that looks like C. The
+mode of programming is similar to structured BASIC or byte-compiled LISP in
+that all data is dynamically allocated, and that a variable can hold any value
+not just what it was declared as. It is not a compiling language, merely
+byte-compileing and the code is then interpreted by a program written in C.
+
+The compiler and interpreter are integrated in a program called driver, it is
+capable of dealing having any number of programs in memory, but it is not
+multitasking, thus only one program can run at a time.
+
+A program is a set of functions and variable declaration read from a
+LPC-source file, there is no intermediate form like 'executables' or dot-o
+files. From these programs, objects are cloned. Every object has it's own
+memory for the global variables in the program. It is not possible to call
+a function without an object to call it in.
+
+All values in LPC consists of a cell contaning both the type of the cell, and
+the data itself. The data might be an integer, float or a pointer to some
+other data. In C only the compiler knows the type of a variable, it is not
+possible to know if a variable is an integer or float by looking at it's
+value afterwards.
+
+Now let's look at an example program:
+
+	string gazonk;
+
+	void main(int argc,string *argv)
+	{
+	  int e,foo,bar;
+	  for(e=0;e<10;e++)
+	  {
+	    write(e);
+	  }
+	}
+
+Ok, everything looks like C, except that write() statement, which is a
+predefined LPC function. Documentation of all such function can be found
+in the directory doc/efun. If you aren't familiar with C, then maybe some
+explainations might be in order:
+
+The first line 'string gazonk;' is a declaration of a global variable of the
+type 'string'. Then follows a function that is declared to return void, which
+means that it don't return anything and takes an int called argc and an array
+of strings called argv as argument. Then the line 'int e,foo,bar;' reserves
+space for 3 local varables of the type int. Then follows a loop that first
+sets e to 0, and runs while e<10 and writes e and increases e for every loop.
+See doc/lpc/control to find out more about loops etc.
+
+Let's assume this program was saved in the file test.c and that we want
+to load and we want to make a program that loads it and calls main().
+Then this is what you would write in another program:
+
+	void do_it()
+	{
+	  object o;
+	  o=clone_object("test");
+          o->main(1,({"foo"}));
+	}
+
+This example is somewhat simplifyed, normally a full path name is needed as an
+arument to clone_object. Note that o will be a pointer to the object cloned,
+not the object itself. The operator -> returns a function pointer to the
+function main in the object pointed to by o. The paratheses are then the
+operator that calls the function that is written just before it. Here I give
+main() the arguments 1 and an array with the string as the only element.
+Because of LPC's dynamic structure, the array is not really a constant,
+instead a structure is memory is built at execution time and a pointer to it
+is sent to main(). It is then freed when it no longer needed.
+
+All lpc types have the properties of ether a value or a pointer, ints, strings
+and floats all works like values, while arrays, mappings, lists, objectpointer
+and functionpointers all behave like pointers. The main difference is that
+values are copied when an assignment is made, while in the case of a pointer
+anoter reference is made to the object pointed to. Thus if a is an array and
+b is assigned to a like: b=a; then any destructive change in the array a will
+also be seen in the array b because they will be pointers to the same array.
+
+A chain of calls always starts from with a call from inside the driver, all
+functions that has special meanings to the driver are described in the
+directory doc/lfun.
+
+Let's look a little closer at the LPC syntax:
+[] will mean that that part is optional unless otherwise is explained.
+<> will mean that that part should be filled in by some text unless otherwise
+   is explained.
+... means that the previous list can be of any number of items, even zero.
+
+A global variable definition:
+	<type> <name> [=<statement>] , <name> [=<statement>] , .... ;
+	This defines global variables and optionally sets their values. If
+	they are not initiated they will be set to an integer zero.
+
+A function declaration looks like this:
+	<type> <name> ( <type> <arg_name>, <type> <arg_name> , ... ) ;
+	The fist type is the return type, then follows the name of the funcion.
+	The second type is the type of the first argument, which name follows.
+	Function declarations are used to let the compiler make an function
+	header that can be used before the function is defined. This is called
+	a 'forward declaration' in PASCAL.
+
+A function definition:
+	<type> <name> ( <type> <arg_name>, <type> <arg_name> , ... )
+        <block>
+
+        The first line corresponds to a function declaration, that is exacly what
+	it is, then follows the 'body' of the function, which is a program block
+	with the argument for the funcion defined as local variables.
+
+A block:
+	{ <local declarations> <statements> }
+	The local declarations is just a list of variable declarations of the
+	same form as the global declarations but the variables are only usable
+	within the block.
+
+A statement:
+	A statement can be many things, it can be a for-loop, a function-call
+	an if-else statement, a switch and assignment or simply a block.
+	Basically can be said that a statement has two forms: one containing
+	another block, like if-else statements, switches, for-loops etc. and
+	one that is an expression followed by a semicolon.
+
+Expressions:
+	Here is a list of operators that can be used in expressions, listed
+	in ascending priority order:
+
+	<> and [] are literal in this listing.
+	A,B,C... are any expression
+	a,b,c... are variables
+
+
+Priority 0:	
+	A?B:C returns B if a is nonzero and C otherwise
+
+Priority 1:
+	a=B assigns the value of b to the variable a and returns that value
+
+	a+=B same as a=a+(B)
+	a-=B same as a=a-(B)
+	a/=B same as a=a/(B)
+	a*=B same as a=a*(B)
+	a&=B same as a=a&(B)
+	a|=B same as a=a|(B)
+	a^=B same as a=a^(B)
+	a&&=B same as a=a&&(B)
+	a>>=B same as a=a<<(B)
+	a<<=B same as a=a>>(B)
+
+Priority 2:
+	A||B returns A if A is nonzero otherwise B
+	A&&B returns A if A is zero otherwise B
+
+Priority 3:
+	A|B returns A or B bitwise ored
+	A&B returns A and B bitwise anded
+	A^B returns A xor B
+
+Priority 4:
+	A==B returns 1 if A is equal to B otherwise 0
+	A!=B returns 1 if A isn't equal to B otherwise 0
+	A<B return 1 if A is lesser than B otherwise 0
+	A>B return 1 if A is greater than B otherwise 0
+	A<=B return 1 if A is lesser than or equal to B otherwise 0
+	A>=B return 1 if A is greater than or equal to B otherwise 0
+
+Priority 5:
+	A<<B returns A bitwise shifter B positions right
+	A>>B returns A bitwise shifter B positions left
+
+Priority 6:
+	A+B returns A plus B
+	A-B returns A minus B
+
+Priority 7:
+	A*B returns A multiplyed with B
+	A/B returns A divided by B
+
+Priority 8:
+	!A returns 1 if A is zero, 0 otherwise
+	~A returns the bitwise compliment to A
+	(type)A returns a casted to the type inside the parentheses
+	a++ increases the variable a (which must be an integer) with 1 and
+	    returns the value a had _before_ it was increased
+	++a increases the variable a with 1 and returns the value of a
+	a-- decreases the variable a (which must be an integer) with 1 and
+	    returns the value a had _before_ it was decreased
+	--a increases the variable a with 1 and returns the value of a
+
+	A[B] return the index B in the array or mapping A
+	     (this is also a variable)
+
+Priority 9:
+        A[B..C] return all elements in A from B to C
+	
+
+	A(B) calls the function A with the argument b
+	A->foo returns the function called foo in the object A
+	({A,B}) returns an array with A and B as elements
+	([A:B]) returns A mapping with A as an index to the data B
+	(<A,B>) returns A list with A and B as memebers
+
+	1 2 3 4 ... returns an integer
+	"foobar" returns the string foobar
+	1.0 2.2 3.14 ... returns a float
+
+	foobar(A,B) or efun::foobar(A,B) call the efun called foobar with A
+		and B as arguments.
+	
+	(A) returns A
+
+	Note that the order of evaluation within prioritys normally is left to
+	right, but not in all cases.
+	See doc/operators/ for further details.
+
+
+Inheritence
+A program may 'inherit' one or more programs, this is simply a copy operation
+that copies all the functions and variable defenitions to the new program, it
+does however have a lot of advantages over the include-statement, which merely
+includes text into the new program: It saves memory, because the body of the
+functions is never copied, the original is used instead. It saves time,
+because the inherited code doesn't have to be compiled again. To inherit a
+program simply write 'inherit <filename>' in the beginning of the file. Note
+that defines and macros will _not_ be inherited though.
+

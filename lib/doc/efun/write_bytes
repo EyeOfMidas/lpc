@@ -1,0 +1,12 @@
+NAME
+	write_bytes - write a string to a file at a byte offset
+
+SYNTAX
+	int write_bytes(string file, int offset, string foo);
+
+DESCRIPTION
+	Write the string foo to the file file at offset offset.
+	Return 1 for success.
+
+SEE ALSO
+	write_file, read_bytes

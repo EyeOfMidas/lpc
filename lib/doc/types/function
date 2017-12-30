@@ -1,0 +1,23 @@
+NAME
+	function - a functionpointer type
+
+SYNTAX
+	if foo is a function, then the word foo will be a functionpointer.
+	if foo is a function in an inherited program ::foo is a
+	functionpointer. If the inherited program was called bar, then
+	bar::foo is also a functionpointer. If gazonk is an object
+	then gazonk->foo is a pointer to the function foo in gazonk. 
+
+OPERATORS
+	->, ()
+	functoinp, call_function, get_function, function_name, function_object
+	this_function
+
+DESCRIPTION
+	A functionpointer is a reference to a function in an object. It can be
+	called with call_function which can also be written as just ().
+	If the object the functionpointer is in is destructed the pointer will
+	become 0. If you try to call a functionpointer that has is 0 then 0
+	will be returned.
+
+

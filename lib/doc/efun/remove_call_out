@@ -1,0 +1,13 @@
+NAME
+	remove_call_out - remove a call_out
+
+SYNTAX
+	int remove_call_out(function fun);
+
+DESCRIPTION
+	Remove next pending call out for function fun in this object.
+	The time left is returned. If there was no such call_out,
+	zero_type(remove_call_out(fun)) will return 1.
+
+SEE ALSO
+	call_out, call_out_info, find_call_out, zero_type

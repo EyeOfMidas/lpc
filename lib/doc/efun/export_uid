@@ -1,0 +1,12 @@
+NAME
+	export_uid - export euid to other objects uid
+
+SYNTAX
+	int export_uid(object ob);
+
+DESCRIPTION
+	Set the uid of object ob to this_object's effective uid. It is
+	only possible when object ob has an effective uid of 0.
+
+SEE ALSO	
+	seteuid, getuid.

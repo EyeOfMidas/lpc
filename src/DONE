@@ -1,0 +1,174 @@
+
+* lpc4 - basic release features:
+  (I might have forgotten a lot)
+  Removed: say, shout, interactive-structure, ed, shadows and
+           tracecode.
+
+  gdbm support (db_get, db_set, db_delete, db_indices)
+  functionpointers, lambda-functions, constant optimizing
+  floats, socket-efuns (thanks to jaques)
+
+* 15/6-93
+  added support for binary strings, converted write_file, read_file
+  index, range, add and socket_write so far.
+
+* 16/6-93
+  Patched read_callback and write to use binary strings.
+
+* New release
+  las.c is new file containing the parse-tree portion of the compiler
+  lots of compiler code rewritten and moved around.
+  Optimizer added
+  gdbm data should now handle binary strings
+  added combine_path
+  removed implicit cast to object
+  implemented implicit cast to object in las.c, also implemented implicit
+  cast to function to gain compatility.
+
+* version 4.4.1 (11/8-93)
+  New efun: search_array
+  Fixed bug so that restore_object won't be optimized away.
+  Fixed bugs in + || ^ - for lists and mappigns.
+  Fixed bug in type-checking.
+  Fixed some other bugs I don't remember as well.
+
+* version 4.4.2 (6/9-93)
+  add_action now uses arrays instead of linked lists.
+  new efun: solidify_mapping
+
+* version 4.5.3
+  Lots of bugfixes done.
+  Makefile cleaned up.
+
+* version 4.5.4
+  "\234" now works in strings, "\000" still doesn't work though.
+  more bugs fixed.
+  Calls to some lfuns optimized (see the efun get_lfun)
+  Save/restore object now attempts to save/restore functionpointers to
+  objects that has a hashed name.
+  Fixed a bug in tailrecursion (I hope)
+
+* version 4.5.5
+  las could inline functions, but when they are redefined by inheritance
+  problem arised. Now you have to use the modifyer 'inline' to actually make
+  the compiler consider the function worthy of inlining.
+  I also added #pragma all_inline.
+  While I was added I rearranged the function and inherit data structures
+  in the program struct. Hopefully they will use less memory now.
+  fixed so it compiles nicely under solaris (beware of gnu-ar)
+
+* version 4.05.06
+  solidify_mapping now works.
+  ::init() now calls init() in all inherited objects.
+  call_function() can now call arrays of functions. (like map_array)
+  added a cache for find_function
+  fixed bug in perror
+  F_WHILE was unessecary, we now use F_FOR only
+  c++ style comments should now work (ie //)
+  #line now works as it should.
+  New version of gdbm is used.
+
+* version 4.05.07
+  add_action gave error when function returned 0
+  fixed so that zero_type(map[index])==1, zero_type is a new_efun
+   zero_type can return 2 or 3 for zeros that have been destructed objects
+   or functions.
+  Return from a catch() without errors is now done with F_DUMB_RETURN
+  call_out.c rewritten from scratch.
+  it is now possible to cast an int to an object, the object with that
+   clonenumber (if any) will be returned.
+  When we run out of memory, shut() is called in the master.
+  pluralize() has been taken out of the driver, and made a simul_efun
+  strstr() should now handle binary strings.
+  solidify_mapping now works
+  some fixes in the socked functions have been done.
+  upper_case() & lower_case() were buggy, odd
+  a function signal() was added to master.c, it is patched when the driver
+   receivesa SIGINT, SIGTERM or SIGQUIT with a bitfield containging the
+   signals. If the driver is compiled without DEBUG defined SIGSEGV, SIGFPE
+   and SIGBUS are also caught. If signal() returns zero, a default action is
+   taken, otherwise the signal is ignored. Note that signal() is called from
+   inside when another program is running, so don't go moving objects or
+   around in signal().
+  optimized copying of program constants a bit.
+  It is now possible to put @array in an argument list, and the driver will
+   push all the index in the array as arguments to the function. Example:
+   sum( @ ({ 1, 2, 3 }) ) == 6 This only works for functions that can take
+   a variable number of arguments though.
+  the postfix for lpc-files can now be defined in config.h (some prefers .lpc)
+
+* version 4.05.08
+  made some bugs in socket_efun.c, which I then fixed.
+  replaced gdbm with my own hack (1/15 the size)
+  new varargs functionality, a function defined foo(int a,...) ; can call 
+   get_varargts(); which will return an array with all arguments except those
+   in the definition, ie. 'a'.
+
+* version 4.05.09
+  Added F_SHORT_CONSTANT_FUNCTION
+  Fixed so f_constant_function won't push destructed objects on stack.
+  fixed so lvalues can have parentheses
+  more documentation added.
+  rewrote lex.c
+  Added a script to ease compiling called 'build', you should normally use
+   build instead of make.
+
+*version 4.05.10
+  Added a regexp type (called regular_expression).
+  Added optimizations for a=10; write (a); => write(a=10);
+  Fixed depend optimizations to work better.
+  Optimized my sscanf (it was slow)
+  Inserted 'static' where I could fit it.
+  Remade interpreter to a switch again, efuns will be outside the
+   switch though
+  Fixed so that foo() is stored in code as an opcode with a larger value
+   than the largest 'standard' opcode.
+  Fixed some bugs in dbase.c
+  Trying to get autoconf to work for me instead of against me.
+
+*version 4.05.11
+  All strings in svalues are now shared strings.
+  Wrote 2 new versoins for freeing shared strings:
+     STRALLOC_REFS is the old one
+     STRALLOC_GC uses no refcounts, and frees strings with mark and sweep
+     STRALLOC_HYBRID uses refcounts, but frees them at garbage collect
+  STRALLOC_GC_TIME should be defined to seconds between garbage collect
+  present() and tell_object() has been removed and made a simul efun.
+  indent() has been removed
+  sort_array() has been broken and fixed since 4.05.10
+  Fixed debug_info()
+  Fixed a bug when writing this_object()->fun();
+  All lvalue referencing problems has now been taken care of (hopefully)
+  Some purifying took care of some memory leaks.
+
+*version 4.05.12
+  get_cached_functions added to master.c
+  all apply_master_ob sped up
+  Fixed a bug in ::func(); (if func wasn't found)
+  Fixed a rather serious bug in while()
+  Fixed a bug in call_out_info.
+  Corrected some of the efun manuals.
+  << >> fixed.
+  Fixed lpc4 to use unaligned memory access if available.
+  removed the trapping of sigsegv, sigfpe & sigbus as it didn't work as
+    expected.
+  added add_simul_efun, get_function_list & function_arguments
+  new efun: fuzzymatch (thanks to Stig Sæther Bakken (Auronthas))
+  Jumps are now 32-bit making _very_ large programs possible.
+  added a scripts that tests the major features of the driver,  the script
+    doesn't test everything yet, but it will one day.
+  lots of lfun calls were made to call static functions as well.
+  all global variables that are declared as something other than function or
+    mixed now occupies 4 bytes instead of 8.
+  Line number storage fixed to use half as much space aproximatively, now
+    the should hopefully point right too.
+
+*version 4.05.13
+  This release was meant to be called .12, but unfinished .12 drivers leaked
+    out, so I decided to call this release .13.
+  Fixed a bug that made typechecking disabled in lambda functions.
+  optimized insert on mappings a little
+
+*version 4.05.14
+  fixed a bug in copy_svalues_raw that could crash if compiled without DEBUG
+  popen() now works with solaris.

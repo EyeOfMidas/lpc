@@ -1,0 +1,18 @@
+NAME
+	l_delete - delete a member in a list
+
+SYNTAX
+	list l_delete(list l,mixed m);
+
+DESCRIPTION
+	Remove the member m from the list l, and return the first argument.
+	Could be written l=l-(<m>) but l_delete is faster if you delete
+	only one member.
+
+NOTA BENE
+	l_delete is destructive, that is if you write a=l_delete(b,c)
+	the member c will be deleted in b, and a will be a pointer to the
+	same list as b.
+
+SEE ALSO
+	l_sizeof, indices, listp

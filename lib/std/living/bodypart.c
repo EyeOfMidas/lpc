@@ -1,0 +1,1 @@
+inherit "/std/thing.c";

@@ -1,0 +1,16 @@
+NAME
+	clone_object - clone an object from a given program
+
+SYNTAX
+	object clone_object(string file);
+
+DESCRIPTION
+	Clone an object from a program loaded from file file. If no such
+	program is loaded the driver will attempt to load a program from
+	that name. If the filename contains a '#' the part before the #
+	will be considered the filename and the rest will be sent as an
+	argument to create(). This way you can do objects that initialize
+	themself easily.
+
+SEE ALSO
+	destruct, load, update

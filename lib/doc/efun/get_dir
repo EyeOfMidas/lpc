@@ -1,0 +1,15 @@
+NAME
+	get_dir - return all files in directory
+
+SYNTAX
+	string *get_dir(string dir);
+
+DESCRIPTION
+	Returns an array contaning all the files in a directory. It matches
+	'*' to any string in the basename of the dirname, ie.
+	get_dir("/*.c"); returns all files in the root that ends with .c
+	Because of this matching you must always have a '/' in the end if
+	you want all the files in a directory.
+
+SEE ALSO
+	rmdir, file_stat

@@ -1,0 +1,11 @@
+NAME
+	all_inventory - return all objects in an object
+
+SYNTAX
+	object *all_inventory(object ob)
+
+DESCRIPTION
+	Returns an array of the objects contained in the inventory of ob.
+
+SEE ALSO
+	first_inventory, next_inventory, deep_inventory

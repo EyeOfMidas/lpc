@@ -1,0 +1,12 @@
+NAME
+	id - identify an object
+
+SYNTAX
+	int id(string s) { ... }
+
+DESCRIPTION
+	This function is used by present() to determine if an object can be
+	said to match the string s, if it does, this function should return 1.
+
+SEE ALSO
+	efun/present

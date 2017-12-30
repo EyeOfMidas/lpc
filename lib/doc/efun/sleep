@@ -1,0 +1,12 @@
+NAME
+	sleep - create some lag...
+
+SYNTAX
+	void sleep(int s);
+
+DESCRIPTION
+	This function can only be run when in batch mode. It blocks the driver
+	for s seconds causing a hopefully desirable delay.
+
+SEE ALSO
+	call_out

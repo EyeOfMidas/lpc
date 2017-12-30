@@ -1,0 +1,20 @@
+NAME
+	next_clone - find the next clone from a certain program
+
+SYNTAX
+	object next_clone(string|object c);
+
+DESCRIPTION
+	This function is for recursing over all the clones of a program.
+	Given a program name as a string, it tries to find the first clone
+	from that program. Given an object it will find the next clone from
+	same program. If no more clones were found 0 is returned.
+
+EXAMPLE
+	object o;
+	for(o=next_clone("obj/monster");o;o=next_clone(o))
+	  write(o->short)()+"\n");
+
+SEE ALSO
+	object_cpu, clone_number, created
+	

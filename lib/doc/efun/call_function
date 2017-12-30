@@ -1,0 +1,25 @@
+NAME
+	call_function - call a function-pointer
+
+SYNTAX
+	mixed call_function(function fun,mixed arg,...);
+	or
+	fun(mixed arg, ...);
+
+DESCRIPTION
+	This is the basic efun to call other functions. Normally the second
+	syntax is used, and often with a constant function as first argument.
+
+EXAMPLES
+	/* suppose that reset is a function defined in the inherited
+           object foo.c */
+
+	call_function(reset,1);
+	reset(1):
+	::reset(1);
+	foo::reset(1);
+
+	/* reset, ::reset and foo::reset are all constant functionpointers */
+
+SEE ALSO
+	get_function, functionp

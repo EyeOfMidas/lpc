@@ -1,0 +1,11 @@
+NAME
+	debug_info - return some info about objects
+
+SYNTAX
+	mixed debug_info(int w, mixed|void, ...);
+
+DESCRIPTION
+	The syntax looks kind of strange, but in practice you can only ues:
+	string debug_info(int w,object o);
+	where w is 0 or 1 (so far) in which case it returns some readable
+	(?) info about the object o.

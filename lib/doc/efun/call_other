@@ -1,0 +1,10 @@
+SYNTAX
+	unknown call_other(object ob, string fun, mixed arg, ...)
+	unknown ob->fun(mixed arg, ...)
+
+DESCRIPTION
+Call function in another object with an argument. The return value is
+returned from the other object.
+
+See also: call_out()
+

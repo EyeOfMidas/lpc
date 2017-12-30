@@ -1,0 +1,9 @@
+NAME
+	getcwd - return the current working directory
+
+SYNTAX
+	string getcwd();
+
+DESCRIPTION
+	This function can only be called when in batch mode. It returns
+	the drivers current working directory.

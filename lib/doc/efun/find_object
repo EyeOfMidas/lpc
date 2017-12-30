@@ -1,0 +1,14 @@
+NAME
+	find_object - find an object with a given hashed name
+
+SYNTAX
+	object find_object(string str);
+
+DESCRIPTION
+	Find an object with the file name str. If the file isn't loaded,
+	it will not be found. Objects that has been cloned with clone_object
+	can not be found automatically with this function unless they
+	have called enter_obj_hash.
+
+SEE ALSO
+	enter_object_hash, hash_name

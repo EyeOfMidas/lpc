@@ -1,0 +1,13 @@
+NAME
+	restore_object - restore variables from a string
+
+SYNTAX
+	int restore_object(string variables)
+
+STRING
+	Restore values of variables for current object from a string.
+	Variables that has the type modifer static will not be restored.
+	This is the inverse of save_object.
+
+SEE ALSO
+	 save_object

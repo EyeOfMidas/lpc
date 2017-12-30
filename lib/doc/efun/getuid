@@ -1,0 +1,12 @@
+NAME
+	getuid - get the uid of an object
+
+SYNTAX
+	string getuid(object ob);
+
+DESCRIPTION
+	Get the userid of the object ob. If no object is given the uid of
+	this_object() will be returned.
+
+SEE ALSO
+	seteuid, export_uid, geteuid

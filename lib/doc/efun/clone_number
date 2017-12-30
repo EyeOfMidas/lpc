@@ -1,0 +1,10 @@
+NAME
+	clone_number - return the number of this object
+
+SYNTAX
+	int clone_number(object beast);
+
+DESCRIPTION
+	Returns the number of the beast. Might not be highly useful.
+
+

@@ -1,0 +1,12 @@
+NAME
+	throw - throw a string to a pending catch
+
+SYNTAX
+	void throw(string value)
+
+DESCRIPTION
+	Use this to return immediately to a catch() call. If no catch() is
+	waiting, an error will be generated instead.
+
+SEE ALSO
+	catch

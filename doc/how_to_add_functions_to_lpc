@@ -1,0 +1,151 @@
+How to add efuns to lpc:
+
+First a short introduction to how lpc works from the inside:
+It has a stack of svalues (described below) on which it pushes arguments to
+functions one at a time. Functions are coded as bytes which are read and
+the approperiate function is called. Lpc does an automatic check on the first
+two arguments, but it is up to the function to check he rest. A function that
+has a variable amount of arguments will receive the number of arguments on the
+stack as an argument, others are expected to know how many there should be.
+The function should pop all it's arguments and if it is declared to return
+anything except void it should leave an argument on the stack.
+
+Let's say you want to add the function foobar.
+Let's also assume that this function takes 2 strings one integer and a float
+as argument and returns an object.
+Then you need to do this:
+
+add the line:
+object foobar(string, string, int, float);
+
+to func_spec.c
+Then add the function f_foobar() in efuns.c (or somewhere in the source)
+f_foobar should look something like this:
+
+void f_foobar(int num_arg,int instruction,struct svalue *argp)
+{
+  struct object *o;
+  /* because it always take 4 aruments we are supposed to know how many
+   * arguments there is on the stack, so num_arg will be -1
+   */
+  check_argument(2,T_INT);
+  check_argument(3,T_FLOAT);
+
+  /* from here on you can access the arguments like this:
+   * 1: argp[0].u.str 
+   * 2: argp[1].u.str 
+   * 3: argp[2].u.number 
+   * 4: argp[3].u.fnum 
+   */
+
+  /* then we do some computation that sets o to a value or NULL */
+
+  /* pop the arguments */
+  pop_n_elems(4);
+
+  if(o==NULL)
+  {
+    push_zero();
+  }else{
+     push_object(o);
+     /* because o's refcount will increase when we push it,
+      * we must lower it again
+      */
+     free_object(o, "foobar");
+  }
+}
+
+Then recompile..
+
+This is basically how it is done, but if you're unsure about anything, try
+finding a function that uses similar arguments as the one you want to add
+and check out how _it_ does.
+
+
+Macros you will be likely to use:
+check_argument(<argument>,<type>);
+	Check that the argument is of the right type, note that the arguments
+	start at 0
+
+Functions you must use:
+void pop_stack()
+	pop one argument off stack
+
+void pop_n_elems(int nr)
+	pop nr arguments off stack
+
+void push_malloced_string(char *s)
+	push the malloced string s onto the stack
+
+void push_shared_string(char *s)
+	push the shared string s onto the stack	without increasing ref count
+
+void push_new_shared_string(char *s)
+	make a shared string from the null-terminated string s and push it
+	on the stack.
+
+void push_svalue(struct svalue *s)
+	push an copy of the svalue s onto the stack
+
+void push_list(struct vector *v)
+void push_vector(struct vector *v)
+void push_mapping(struct vector *v)
+	push the mapping/vector/list v onto the stack and increase ref-count
+
+char *make_shared_string(char *s)
+	return a shared copy of the string s
+
+char *free_string(char *s)
+	free the shared string s
+
+void push_zero()
+	push a zero on the stack
+
+void push_one()
+	push an integer 1 on the stack
+
+void push_object(struct object *o)
+	push the object o on the stack and increase ref count
+
+void push_float(float f)
+	push the float number f on the stack
+
+void push_string(char *s,int type)
+	push a copy of the string s on the stack, the type must be one of
+	STRING_MALLOC, STRING_CONSTANT or STRING_SHARED
+
+
+
+How an svalue works:
+
+this is what an svalue looks like:
+
+struct svalue
+{
+  short type;		   /* one of the T_* */
+  short string_type;       /* one of the STRING_* */
+  union
+  {
+    float fnum;             /* for T_FLOAT */
+    char *string;           /* for T_STRING */
+    int number;             /* for T_NUMBER */
+    struct object *ob;      /* for T_OBJECT & T_FUNCTION */
+    struct vector *vec;     /* for T_POINTER, T_MAPPING & T_LIST */
+    struct svalue *lvalue;  /* for T_LVALUE */
+  } u;
+};
+
+Basically, you needn't worry about lvalues and functionpointers, and the
+rest is pretty much self-explainary. But here's a short breifing anyway:
+type is one of T_FLOAT, T_STRING, T_NUMBER, T_OBJECT, T_FUNCTION, T_POINTER
+T_MAPPING, T_LIST or T_LVALUE and tells you which of the member in the union
+to use.
+The string_type has to do with the storage of the string, only malloced strings
+may be changed directly, because the others might have more than one pointer,
+and only shared strings can be compared through their pointers.
+
+Normally you don't go around freeing strings and stuff a lot, you just do
+free_svalue or pop_stack on that svalue.
+
+
+

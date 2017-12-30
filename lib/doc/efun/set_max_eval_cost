@@ -1,0 +1,10 @@
+NAME
+	set_max_eval_cost - set max eval cost...
+
+SYNTAX
+	void set_max_eval_cost(int cost);
+
+DESCRIPTION
+	This function can only be runned by objects that have the same euid
+	as the masterobjects uid. It temporarily sets the eval cost to cost
+	so you may work for as long (or short) as you want.

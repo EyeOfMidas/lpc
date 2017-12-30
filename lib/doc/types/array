@@ -1,0 +1,33 @@
+NAME
+	array - a dynamic array type
+
+SYNTAX
+	construction: ({ data0, data1, data2, data3, data4 })
+	              allocate(10)
+
+	indexation:   data1=arr[1];
+
+OPERATORS
+	[], [..] , &, |, ^, +, -
+	pointerp, map_array, sum_arrays, filter_array, sizeof
+
+DESCRIPTION
+	Arrays in lpc are allocated blocks of values. They are dynamically
+	allocated and does not need to be declared as in C. The values in
+	the array can be set when creating the array as in the first
+	construction or anytime afterwards like this: arr[index]=data where
+	index is an integer greater or equal to 0 and smaller than the array
+	size. Note that arrays are shared and use reference counts to keep
+	track of their references. This will have the effect that you can
+        have two variables pointing to the same array, and when you change
+	an index in in it, both variables will show the change.
+
+EXAMPLE
+	/* This will write "10\n" */
+	a=({1,2,3,4,5});
+	b=a;
+	b[0]=10;
+	write(a[0]+"\n");
+
+SEE ALSO
+	mapping

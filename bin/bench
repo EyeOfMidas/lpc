@@ -1,0 +1,91 @@
+
+#define NUM 10000
+
+int testonce;
+
+int foobar(int foo) { }
+string *define_include_dirs() { return ({}); }
+
+#define NEW_TEST() gurka=rusage(),foo[foop++]=gurka[0]+gurka[1]
+#if !defined(LPC4) && !defined(__VERSION__)
+#define write send_message
+#endif
+
+mixed main()
+{
+  mixed *gurka;
+  int *foo,foop;
+  mixed a;
+  int e,d;
+  mixed side,b;
+  if(testonce) return 0;
+  testonce=1;
+
+  side=allocate(30);
+  foo=allocate(30);
+
+  /* 1, array addition 1 */
+  a=allocate(10);
+  NEW_TEST();
+  for(e=0;e<NUM;e++) side[random(1)]=a,a;
+  NEW_TEST();
+  for(e=0;e<NUM;e++) side[random(1)]=a+a;
+  NEW_TEST();
+
+  /* 1, array addition 2 */
+  a=b=allocate(1);
+  NEW_TEST();
+  for(e=0;e<NUM/20;e++) side[random(1)]=a=b;
+  NEW_TEST();
+  for(e=0;e<NUM/20;e++) side[random(1)]=a+=b;
+  side[1]=a;
+  NEW_TEST();
+
+  /* 3, string addition */
+  a="asljkdf;ljksd";
+  NEW_TEST();
+  for(e=0;e<NUM;e++) side[random(1)]=a,a;
+  NEW_TEST();
+  for(e=0;e<NUM;e++) side[random(1)]=a+a;
+  NEW_TEST();
+
+  /* 4, int addition */
+  d=1000;
+  NEW_TEST();
+  for(e=0;e<NUM;e++) side[random(1)]=d,d;
+  NEW_TEST();
+  for(e=0;e<NUM;e++) side[random(1)]=d+d;
+  NEW_TEST();
+
+  /* 5, loop */
+  a=1000;
+  NEW_TEST();
+  NEW_TEST();
+  for(e=0;e<NUM;e++) a+=a;
+  NEW_TEST();
+  side[1]=a;
+
+  /* 6, function call */
+  a=1000;
+  NEW_TEST();
+  for(e=0;e<NUM;e++) side[1]=random(1);
+  NEW_TEST();
+  for(e=0;e<NUM;e++) side[1]=foobar(random(1));
+  NEW_TEST();
+
+  NEW_TEST();
+  for(e=0;e+1<foop;e+=3)
+  {
+    write("Part "+(e/3)+": "+((foo[e+2]-foo[e+1]*2+foo[e]))+"\n");
+  }
+  shutdown();
+  return side;
+}
+
+void create() { main(); }
+void reset() { main(); }
+string get_root_uid()
+{
+  main();
+  return "Root";
+}

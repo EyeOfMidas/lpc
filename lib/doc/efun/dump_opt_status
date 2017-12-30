@@ -1,0 +1,15 @@
+NAME
+	dump_opt_status - dump some data about optimizations
+
+SYNTAX
+	string dump_opt_status();
+
+DESCRIPTION
+	Returns a string containing readable info about optimizations.
+
+BUGS
+	Not yet implemented
+
+SEE ALSO
+	dump_malloc_data, dump_string_data, dump_heart_beat_data,
+	 dump_prog_table_data, dump_index_table_data

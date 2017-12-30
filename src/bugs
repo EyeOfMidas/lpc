@@ -1,0 +1,34 @@
+A lot of calls to xalloc() should be replaced with alloca().
+
+Only the first two arguments to efuns have their types checked, and only
+at run time. Not at compile time. The data structure should be enhanced.
+
+What happens to user when an error occurs in create() ?
+
+The people demand more runtime configuration possibilites.
+
+The compiler should use my dynamic_buffer routines instead of the mem_block
+thingies that are there now.
+
+the documentation needs updating
+
+does the loop -> once opimization work correctly?
+
+Doc on dbase efuns is wrong.
+
+parent->opt_info is used, but not yet computed in optimze
+
+string refs seems to go overboard when a program fails to compile
+  (Or at least my debug routines says so)
+
+Is it possible to have a local variable with the same name as a function?
+
+the nodes in las.c should probably hold svalues all the time.
+
+/* more optimizations */
+/*
+	(a+a) => a<<1
+	a*x+a*y => (x+y)*a
+*/
+
+valid_override isn't used yet

@@ -1,0 +1,11 @@
+NAME
+	objectp - is the argument an object?
+
+SYNTAX
+	int objectp(mixed arg);
+
+DESCRIPTION
+	Return 1 if arg is an object.
+
+SEE ALSO
+	intp, stringp, pointerp, mappingp, floatp, listp, functionp

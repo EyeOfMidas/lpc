@@ -1,0 +1,23 @@
+NAME
+	list - a set type
+
+SYNTAX
+	construction:	l=(< member1, member2, member3, ... >)
+	probing:	l[member1] returns true if member1 is a member of
+			the set.
+
+OPERATORS
+	[], +, -, &, |, ^
+	l_sizeof, indices, mklist
+
+DESCRIPTION
+	List is a type used mostly for set operations. If you use & and | to
+	set/unset member then you a member will only appear once. If you use
+	+ and - then a member can appear any number of times. If l is a list
+	then l[ind] will return 1 if ind is a member in l oterwise 0. You can
+	not set a member in a list like his l[ind]=1; use l |= (<ind>); or
+	l += (<ind>); instead. The internal representation if a list is equal
+	to a mapping without any data.
+
+SEE ALSO
+	mapping

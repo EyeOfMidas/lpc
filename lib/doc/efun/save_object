@@ -1,0 +1,13 @@
+NAME
+	save_object - save variables to a string
+
+SYNTAX
+	string save_object();
+
+DESCRIPTION
+	Code all non-static variables in current object into a string.
+	This string can be saved, sent, written, sscanf:ed of whatever or
+	sent to restore_object() to restore the variables again.
+
+SEE ALSO
+	 restore_object

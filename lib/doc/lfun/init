@@ -1,0 +1,20 @@
+NAME
+	init - do some initializations
+
+SYNTAX
+	void init() { ... }
+
+DESCRIPTION
+	init is called when:
+
+	o   a 'living' object is moved into this_object()
+	o   a 'living' object is moved to the same environment as this_object()
+	o   this_object() is moved the the same environment as a 'living'
+	o   this_object() is moved into a 'living'
+
+	Note that one call to move_object() can cause several calls to init.
+	The idea is that add_actions are supposed to be put into this function.
+
+SEE ALSO
+	object_enter, exit
+	efun/move_object, efun/enable_commands, efun/add_action

@@ -1,0 +1,11 @@
+NAME
+	sizeof - return the size of an array
+
+SYNTAX
+	int sizeof(mixed arr)
+
+DESCRIPTION
+	Return the number of index in the array.
+
+SEE ALSO
+	allocate

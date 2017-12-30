@@ -1,0 +1,10 @@
+NAME
+	getenv - get an environment variable
+
+SYNTAX
+	string getenv(string var);
+
+DESCRIPTION
+	This function can only be called when in batch mode. It returns the
+	value of the environment-variable var, or 0 if no such variable was
+	found.

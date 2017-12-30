@@ -1,0 +1,18 @@
+NAME
+	object - the objectpointer type
+
+SYNTAX
+	There is no way of writing a constant objectpointer, but all efuns
+	that takes an object as an argument can take a string with it's
+	hash_name instead. If no object is found with that hash_name, it
+	will be loaded. (except for find_object which returns 0 instead
+	of loading)
+
+OPERATORS
+	->
+	objectp, find_object, this_object, first_inventory, next_inventory,
+	all_inventory, environment, clone_object
+
+DESCRIPTION
+	Objectpointers are references to objects. If the object pointed to
+	is destructed the pointer will become 0.

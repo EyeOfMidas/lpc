@@ -1,0 +1,9 @@
+NAME
+	gc - garbage collect
+
+SYNTAX
+	void gc(int much);
+
+DESCRIPTION
+	Walks the lists of the driver and searches for memory to free. If
+	given 1 it tries a little harder compared to when given 0.

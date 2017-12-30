@@ -1,0 +1,12 @@
+NAME
+	m_values - return all the values in a mapping
+
+SYNTAX
+	mixed *m_values(mapping map);
+
+DESCRIPTION
+	Return an array with the values of mapping 'map'.
+
+
+SEE ALSO
+	mappingp, mkmapping, m_indices, m_delete, m_sizeof

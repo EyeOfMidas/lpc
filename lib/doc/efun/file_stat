@@ -1,0 +1,25 @@
+NAME
+	file_stat - stat a file
+
+SYNTAX
+	mixed *file_stat(string file);
+	or
+	mixed *file_stat(string file,1);
+
+DESCRIPTION
+	Returns an array with the following data:
+	({
+	   mode,  /* protection bits */
+           size,  /* size in bytes, -2 for dirs, -3 for links */
+           atime, /* access time */
+	   mtime  /* modification time */
+	   ctime  /* status change time */
+        })
+        See your unix (or whatever) manual for more info.
+	Returns 0 if the file doesn't exist.
+
+	If you give 1 as second argument to this function, it does not follow
+	symbolic links.
+
+SEE ALSO
+	file_size, file_length

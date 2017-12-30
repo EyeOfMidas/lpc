@@ -1,0 +1,16 @@
+NAME
+	code_value - code a value into a string.
+
+SYNTAX
+	string code_value(mixed v);
+
+DESCRIPTION
+	Return a string that contains a readable and decodable representation
+	of the value v.
+
+BUGS
+	Functionpointers cannot be decode, and objects can only be decoded
+	if their hash_name is the same.
+
+SEE ALSO
+	decode_value, save_object, restore_object

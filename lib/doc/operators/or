@@ -1,0 +1,37 @@
+NAME
+	| - bitwise or
+
+SYNTAX
+	int a,b,c;
+	c = a | b;
+
+	or
+
+	list a,b,c;
+	c = a | b;
+
+	or
+
+	mixed *a,*b,*c;
+	c = a | b;
+
+	or
+
+	mapping a,b,c;
+	a=b | c;
+
+DESCRIPTION
+	First case: | returns a number with all bits that are set in a or
+		    b set.
+
+	Second case: | returns a list with all members that are present in
+		eiter a or b.
+
+	Third case is equal to indices(mklist(a) | mklist(b));
+
+	Fourth case: | returns a mapping with all indices that are present
+		in either a or b. Data for the indices will be taken from a.
+
+SEE ALSO
+	and, logical_or, xor, add
+

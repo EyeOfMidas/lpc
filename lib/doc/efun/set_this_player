@@ -1,0 +1,13 @@
+NAME
+	set_this_player - set this_player()
+
+SYNTAX
+	object set_this_player(object o);
+
+DESCRIPTION
+	Sets this player to the object o. Note that the object o must be
+	living for this to work. If everything worked out, o is returned,
+	otherwise 0.
+
+SEE ALSO
+	this_player, living

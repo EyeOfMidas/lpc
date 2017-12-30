@@ -1,0 +1,11 @@
+NAME
+	m_sizeof - return the size of a mapping
+
+SYNTAX
+	int m_sizeof(mapping map);
+
+DESCRIPTION
+	Return the number of indices (or values) in mapping 'map'.
+
+SEE ALSO
+    mappingp, mkmapping, m_indices, m_values, m_delete

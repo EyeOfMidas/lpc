@@ -1,0 +1,16 @@
+NAME
+	top_cpu - return the most cpu-using objects
+
+SYNTAX
+	object *top_cpu();
+
+DESCRIPTION
+	Returns an array with the most cpu-using objects in the mud.
+	Currently it returns 20 objects.
+
+EXAMPLE
+	/* fight lag */
+        map_array(top_cpu(),"selfdestruct");
+
+SEE ALSO
+	map_array

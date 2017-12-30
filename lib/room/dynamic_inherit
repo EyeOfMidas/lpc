@@ -1,0 +1,70 @@
+
+int find_function2(char *s,struct program *p)
+{
+  int a,b,c;
+
+  a=0;
+  b=p->num_functions;
+  while(b>a)
+  {
+    c=(a+b)>>1;
+    if(p->function[p->function_index[c]].name>s)
+      b=c;
+    else
+      a=c+1;
+  }
+  if(p->flags & P_DYNAMIC_INHERIT)
+  {
+    if(p->function[p->function_index[c]].name==s)
+    {
+      return p->function_index_offset+c;
+    }else{
+      for(a=p->num_inhert;a>=0;a--)
+      {
+        b=find_function2(s,p->inherit[a].program);
+        if(b!=-1) return b;
+      }
+    }
+  }else{
+    if(p->function[p->function_index[c]].name==s)
+      return c;
+  }
+  return -1;
+}
+
+int find_function(char *s,struct object *o)
+{
+  struct program *p;
+  int ret;
+
+  p=o->program;
+  s=find_shared_string(s);
+  if(!s) return -1;
+  ret=find_function2(s,p);
+}
+
+struct function *find_function(int f,struct program *p)
+{
+  int a,b,c;
+  if(p->flags & P_DYNAMIC_INHERIT)
+  {
+    if(p->function_index_offset<f)
+    {
+      a=0;
+      b=p->num_inherits;
+      while(b>a)
+      {
+        c=(a+b)>>1;
+        if(p->inherit[c].function_index_offset>f)
+          b=c;
+        else
+          a=c+1;
+      }
+      return find_function(p->inherit[a].program,f-p->inherit[a].function_index_offset);
+    }else{
+      return p->functions+(f-p->function_index_offset)
+    }
+  }else{
+    return p->functions+f;
+  }
+}

@@ -1,0 +1,15 @@
+NAME
+	ctime - convert integer timestamp to readable string
+
+SYNTAX
+	string ctime(int clock)
+
+DESCRIPTION
+	Give a nice string with current date and time, with the argument
+	clock that is the number of seconds since 1970.
+
+EXAMPLES
+	write(ctime(time())+"\n");
+
+SEE ALSO
+	 time

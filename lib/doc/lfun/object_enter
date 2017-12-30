@@ -1,0 +1,12 @@
+NAME
+	object_enter - notify that an object has entered
+
+SYNTAX
+	void object_enter(object o) { ... )
+
+DESCRIPTION
+	This function is called when an object is moved into your object.
+	The object moved is given as an argument.
+
+SEE ALSO
+	init, exit, efun/move_object

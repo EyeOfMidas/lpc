@@ -1,0 +1,25 @@
+NAME
+	destruct - destruct an object
+SYNTAX
+	void destruct()
+	void destruct(object ob)
+
+DESCRIPTION
+	Completely destroy and remove this_object. After the call to
+	destruct(), no global variables will exist any longer, only local,
+	and arguments.
+
+	When an object self-destructs, it will immediately terminate
+	execution and return 0. There is one exception: If the
+	destruct-statement is followed by a return 1; immediately after,
+	then this return statement will be executed.
+
+	If an argument is given then it will try to destruct that object,
+	but it will ask the masterobject for permission first by calling
+	master->query_valid_destruct()
+
+	Normally you don't use destruct() to dispose of another object,
+	instead you use obj->selfdestruct().
+
+SEE ALSO
+	clone_object.

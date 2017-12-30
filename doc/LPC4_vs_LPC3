@@ -1,0 +1,95 @@
+
+A lot of changes have been made in LPC4 compared to earlear versions
+I will try to describe what I have done, and why here.
+
+Floats
+	Obviously floats can be very nice, so I added them as a new type.
+
+Lists
+	A list is really a somewhat ill-named type. It is _not_ a type for
+	linked list. It is instead a type of array in which the order of the
+	members is not important. Like a mapping without data. It has been
+	made so that lookups, and logical operations such as anding and oring
+	is quite fast.
+
+Functionpointers
+	Functionpointers is now used for _all_ LPC function calls (not for
+	efuns though) The name of a defined function is a 'constant
+	functionpointer and parentheses are used to call it. Other ways of
+	writing functionpointers include: file::fun, ::fun, obj->fun and
+	lambdafunctions. A funcitonpointer consists of an objectpointer
+	and an index that tells which function is pointed to in that object.
+
+Lambdafunctions
+	Is essentially a nice way of defining functions inside another
+	function for instance:
+	foo()
+	{
+	  return lambda() { return 2; }
+	}
+
+	Will return a functionpointer to a function that will return 2 when
+	called.
+
+No 'master' objects, only clones
+	I never liked the need for a 'master' for the clones so I removed
+	the cloning of a masterobject and made the functions load() and
+	update() to handle programs. I also invented a way to 'label' clones
+	so that it would still be possible to address objects not yet loaded.
+
+Object labels:
+	When a string is casted to an objectpointer, this will happen:
+	If a # is present in the string, the part before it will be called
+	file and the part after a label. If there is no # in the string or
+	the label is an empty string, then only the file will be considered.
+	It the program residing in the file file isn't already loaded, it
+	will be loaded and a clone will be made. This clone will be labeled
+	with the original string (without the # if the label was empty) and
+	the label will be sent to create() as an argument. The object may then
+	selfdestruct if it didn't like it's label, otherwise that object will
+	be returned and hashed with that label. Next time that string is
+	casted to an object, this clone will simply be digged out of the
+	hashtable.
+
+	There is a similar function in clone_object(), with the only
+	difference that it doesn't actually label the object, it just sends
+	the label to create()
+
+A lot of new efuns have been added (of course)
+	read about them in doc/efun
+
+The compiler has been rewritten
+	It now uses parse-trees and optimizes the code somewhat.
+
+Casting
+	Casting has been changed, casting to most types now actually _does_
+	something. A list of actions during casting follows:
+	string to int: atoi()
+	string to fload: atod()
+	string to object: loads an object as described above
+	string to function: is equal to this_object()->string
+
+No casting
+	Previously some implicit casting were done from strings to objects
+	at runtime, now the compiler tries to detect where such casting is
+	needed and insers castings there. However, if the types doesn't match
+	exactly (ie. if one of them is 'mixed') no casting implicit casting
+	will be done automatically.
+
+Communication
+	The old communication code that used interactive objects has been
+	replaced by general socket efuns. THe removal of the interactive
+	structure also led to the removal of this_interactive(), find_player()
+	ed(), query_idle(), snoop(), trace(), traceprefix() and some other gunk
+	in the driver.
+
+Shadows
+	has been removed, they only complicated things.
+
+Binary strings
+	Some functions can now handle binary strings, that is strings that
+	contains zeros.
+
+Communication
+	The old communication code has been ripped out and replaced by general
+	socket-handling functions.

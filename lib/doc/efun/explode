@@ -1,0 +1,21 @@
+NAME
+	explode - divide a string into parts separated by a delimiter
+
+SYNTAX
+	string *explode(string str, string del);
+	or
+	str/del
+
+DESCRIPTION
+	Return an array of strings, created when the string str is splitted
+	into substrings as divided by del. 
+
+EXAMPLE
+	explode("foo bar gazonk"," ")
+	or
+	"foo bar gazonk"/" "
+
+	will return ({ "foo", "bar", "gazonk" })
+
+SEE ALSO
+	implode, sscanf, extract

@@ -1,0 +1,13 @@
+NAME
+	add_worth - add to column 6 in the 'wizlist'
+
+SYNTAX
+	void add_worth(int value, void|object for);
+
+DESCRIPTION
+	Add a value to the 6 column in the wizlist. If no second argument
+	is given it will add to geteuid(this_object()) otherwise it will
+	add to geteuid(for)
+
+SEE ALSO
+	wizlist

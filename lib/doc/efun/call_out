@@ -1,0 +1,17 @@
+NAME
+	call_out - call a function after a delay
+
+SYNTAX
+	void call_out(function fun, int delay, mixed arg, ...)
+
+DESCRIPTION
+	Set up a call of function fun. If fun is not in this_object() then
+	an error will occur. The call will take place in delay seconds,
+	with the arguments arg provided. arg can be of any type.
+
+NOTA BENE
+	Please note that this_player() is saved, so be careful with
+	assumptions about this_player() and its environment().
+
+SEE ALSO
+	remove_call_out, call_out_info.

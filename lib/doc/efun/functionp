@@ -1,0 +1,11 @@
+NAME
+	functionp - is the argument a function?
+
+SYNTAX
+	int functionp(mixed f);
+
+DESCRIPTION
+	Return 1 if the argument is a function, zero otherwise.
+
+SEE ALSO
+	listp, mappingp, intp, objectp, pointerp, stringp, floatp

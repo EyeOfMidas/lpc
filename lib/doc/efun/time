@@ -1,0 +1,11 @@
+NAME
+	time - return current time in seconds
+
+SYNTAX
+	int time();
+
+DESCRIPTION
+	Return number of seconds since 1970.
+
+SEE ALSO
+	ctime.

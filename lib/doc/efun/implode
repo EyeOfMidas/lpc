@@ -1,0 +1,15 @@
+NAME
+	implode - concatenate an array of strings with an delimeter
+
+SYNTAX
+	string implode(mixed *arr, string del);
+	or
+	arr*del
+
+DESCRIPTION
+	Concatenate all strings found in array arr, with the string del
+	between each element. Only strings are used from the array.
+	This function is the inverse of explode.
+
+SEE ALSO
+	explode.

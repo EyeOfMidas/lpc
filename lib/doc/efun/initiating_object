@@ -1,0 +1,13 @@
+NAME
+	initiating_object - return the object that initiated this call
+
+SYNTAX
+	object initiating_object();
+
+DESCRIPTION
+	This function is basically the same thing as previous_objects()[0]
+	ie. it returns an object that was called by the driver in one way
+	or another.
+
+SEE ALSO
+	previous_object, previous_objects, call_function

@@ -1,0 +1,17 @@
+NAME
+	int - 32-bit integer
+
+SYNTAX
+	17
+	0x17
+	'a'
+
+OPERATORS
+	+, -, !, %, &, |, ^, /, *, <, >, ++, --
+	intp
+
+DESCRIPTION
+	int works almost exactly as the C-type int. It is 32 bits and can
+	hold any integer value between 2147483647 and -2147483648. It also
+	serves as a boolen type in which case 0 means FALSE and every other
+	value (of any type even) means TRUE.

@@ -1,0 +1,14 @@
+NAME
+	array_of_index - slice an array across a 2-dimensional array
+
+SYNTAX
+	mixed *array_of_index(mixed *arr,int ind)
+
+DESCRIPTION
+	equivialent to:
+	map_array(arr,lambda(mixed foo,int i) { return foo[i]; },ind);
+	
+	but much, much faster...
+
+SEE ALSO
+	map_array

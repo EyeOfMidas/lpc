@@ -1,0 +1,42 @@
+Driver command-line-options:
+
+-D<define>
+	Predefine a precompiler macro.
+
+-m<mudlib>
+	Give an alternate mudlib.
+
+-C<arg>
+	Run driver in 'batch mode'
+
+-f<arg>
+	Call the function flag() in master.c with arg as an argument.
+
+-l	Increase lasdebug with 1.
+-d	Increas debug with 1.
+-c	Show all compilations on stderr.
+-t	run driver without reset and heart_beat
+-T	Increase tracelevel with 1.
+-y	(if driver is compiled with YYDEBUG)
+	Run with yydebug.
+-I      This option tells the driver that stdin is connected to a socket.
+        It is normally only used when the driver is run from /etc/services
+
+About tracelevel:
+  If tracelevel is 1 or higer: then all lpc-calls will be written to stderr.
+  2 or higher: All efun calls will be written as well.
+  3 or higher: Every interpreted token is written.
+
+About lasdebug:
+  It prints the parse-trees from the compiler while it compiles. Three
+  different levels exist.
+
+About debug:
+  It writes a lot of debug about refcounts etc. Six levels of debug can
+   be used.
+
+
+Please note that as this driver supports input directly from keyboard. This
+might give problems when running the driver in the background, therefor I
+recommend that you write 'driver </dev/null &' instead of 'driver &' when
+running it in the background.

@@ -1,0 +1,12 @@
+NAME
+	set_socket_read - set the read callback for a socket
+
+SYNTAX
+	int set_socket_read(int fd,function read_callback);
+
+DESCRIPTION
+	Set the read_callback entry for socket fd. Return 1 for
+	success else 0.
+
+SEE ALSO
+	socket_create, set_socket_write, set_socket_close

@@ -1,0 +1,18 @@
+NAME
+	regexp - match an array of strings against a regular expression
+
+SYNTAX
+	string *regexp(string *strs,regular_expression reg);
+
+DESCRIPTION
+	Return an array of all in strs strings that matched the regular
+	expression reg. For more information about regular expression
+	see your unix manuals or the infopages in your emacs.
+
+NOTA BENE
+	Regular expressions uses a kind of compilation, therefor it is
+	MUCH faster to match an array like this than to match one per
+	call.
+
+SEE ALSO
+	sscanf

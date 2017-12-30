@@ -1,0 +1,10 @@
+NAME
+	getchar - get a char from stdin
+
+SYNTAX
+	int getchar();
+
+DESCRIPTION
+	This function may only be called when the driver is in batch mode.
+	It blocks the driver while it waits for input on stdin and when
+	it receives input it reads one char and returns it as an int.

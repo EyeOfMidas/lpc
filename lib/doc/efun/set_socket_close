@@ -1,0 +1,12 @@
+NAME
+	set_socket_close - set the close callback for a socket
+
+SYNTAX
+	int set_socket_close(int fd,function close_callback);
+
+DESCRIPTION
+	Set the close_callback entry for socket fd. Return 1 for
+	success else 0.
+
+SEE ALSO
+	socket_create, set_socket_read, set_socket_write

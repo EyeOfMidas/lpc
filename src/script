@@ -1,0 +1,780 @@
+#!/bin/sh
+set -x
+CC='gcc'
+FLAGS=' -DMUD_LIB="/usr/local/lpc4/lib" -DBINDIR="/usr/local/lpc4/bin"'
+CFLAGS2=-pipe -O2 -g -W -Wunused -Wformat 
+export CC CFLAGS CFLAGS2
+bison -y -d -v /usr/local/lpc4/src/make_func.y
+mv y.tab.c make_func.c
+./config.status --recheck
+./config.status
+touch Makefile machine.h
+echo Run make again.
+exit 1
+( echo gcc -c $FLAGS -o make_func.o make_func.c ; \
+if gcc -E $FLAGS  -o make_func.i make_func.c ; then \
+  if test -f make_func.o && diff -wh >/dev/null 2>/dev/null make_func.i make_func.i~ ; then \
+    echo Not recompiling make_func.o ; \
+    touch make_func.o ; \
+  else \
+    if test -f "make_func.i~" ; then rm make_func.i~; fi ; \
+    if gcc -c $FLAGS -o make_func.o make_func.i ; then \
+      mv make_func.i make_func.i~ ;\
+    else \
+      exit $? ;\
+    fi ;\
+  fi ;\
+else \
+  exit $? ;\
+fi ;\
+) ;
+( echo gcc -c $FLAGS -o port.o port.c ; \
+if gcc -E $FLAGS  -o port.i port.c ; then \
+  if test -f port.o && diff -wh >/dev/null 2>/dev/null port.i port.i~ ; then \
+    echo Not recompiling port.o ; \
+    touch port.o ; \
+  else \
+    if test -f "port.i~" ; then rm port.i~; fi ; \
+    if gcc -c $FLAGS -o port.o port.i ; then \
+      mv port.i port.i~ ;\
+    else \
+      exit $? ;\
+    fi ;\
+  fi ;\
+else \
+  exit $? ;\
+fi ;\
+) ;
+$CC $FLAGS make_func.o port.o -o make_func -lm
+$CC -E -I. -I/usr/local/lpc4/src -DMALLOC_sysmalloc  -DMUD_LIB='"/usr/local/lpc4/lib"' -DBINDIR='"/usr/local/lpc4/bin"' /usr/local/lpc4/src/func_spec.c >list_funcs
+./make_func list_funcs /usr/local/lpc4/src/language.y lang.y efun_protos.h /usr/local/lpc4/src/permanent_statistics /usr/local/lpc4/src/permanent_lang.h opc_cost.h > efun_defs.c
+echo "Expect 1 shift/reduce conflict."
+bison -y -d -v lang.y
+mv y.tab.c lang.c
+mv y.tab.h lang.h
+touch lang.c
+( echo gcc -c $FLAGS -o lang.o lang.c ; \
+if gcc -E $FLAGS  -o lang.i lang.c ; then \
+  if test -f lang.o && diff -wh >/dev/null 2>/dev/null lang.i lang.i~ ; then \
+    echo Not recompiling lang.o ; \
+    touch lang.o ; \
+  else \
+    if test -f "lang.i~" ; then rm lang.i~; fi ; \
+    if gcc -c $FLAGS -o lang.o lang.i ; then \
+      mv lang.i lang.i~ ;\
+    else \
+      exit $? ;\
+    fi ;\
+  fi ;\
+else \
+  exit $? ;\
+fi ;\
+) ;
+( echo gcc -c $FLAGS -o las.o las.c ; \
+if gcc -E $FLAGS  -o las.i las.c ; then \
+  if test -f las.o && diff -wh >/dev/null 2>/dev/null las.i las.i~ ; then \
+    echo Not recompiling las.o ; \
+    touch las.o ; \
+  else \
+    if test -f "las.i~" ; then rm las.i~; fi ; \
+    if gcc -c $FLAGS -o las.o las.i ; then \
+      mv las.i las.i~ ;\
+    else \
+      exit $? ;\
+    fi ;\
+  fi ;\
+else \
+  exit $? ;\
+fi ;\
+) ;
+touch efun_protos.h
+touch opc_cost.h
+touch efun_defs.c
+( echo gcc -c $FLAGS -o lex.o lex.c ; \
+if gcc -E $FLAGS  -o lex.i lex.c ; then \
+  if test -f lex.o && diff -wh >/dev/null 2>/dev/null lex.i lex.i~ ; then \
+    echo Not recompiling lex.o ; \
+    touch lex.o ; \
+  else \
+    if test -f "lex.i~" ; then rm lex.i~; fi ; \
+    if gcc -c $FLAGS -o lex.o lex.i ; then \
+      mv lex.i lex.i~ ;\
+    else \
+      exit $? ;\
+    fi ;\
+  fi ;\
+else \
+  exit $? ;\
+fi ;\
+) ;
+( echo gcc -c $FLAGS -o efuns.o efuns.c ; \
+if gcc -E $FLAGS  -o efuns.i efuns.c ; then \
+  if test -f efuns.o && diff -wh >/dev/null 2>/dev/null efuns.i efuns.i~ ; then \
+    echo Not recompiling efuns.o ; \
+    touch efuns.o ; \
+  else \
+    if test -f "efuns.i~" ; then rm efuns.i~; fi ; \
+    if gcc -c $FLAGS -o efuns.o efuns.i ; then \
+      mv efuns.i efuns.i~ ;\
+    else \
+      exit $? ;\
+    fi ;\
+  fi ;\
+else \
+  exit $? ;\
+fi ;\
+) ;
+( echo gcc -c $FLAGS -o list_efuns.o list_efuns.c ; \
+if gcc -E $FLAGS  -o list_efuns.i list_efuns.c ; then \
+  if test -f list_efuns.o && diff -wh >/dev/null 2>/dev/null list_efuns.i list_efuns.i~ ; then \
+    echo Not recompiling list_efuns.o ; \
+    touch list_efuns.o ; \
+  else \
+    if test -f "list_efuns.i~" ; then rm list_efuns.i~; fi ; \
+    if gcc -c $FLAGS -o list_efuns.o list_efuns.i ; then \
+      mv list_efuns.i list_efuns.i~ ;\
+    else \
+      exit $? ;\
+    fi ;\
+  fi ;\
+else \
+  exit $? ;\
+fi ;\
+) ;
+( echo gcc -c $FLAGS -o array_efuns.o array_efuns.c ; \
+if gcc -E $FLAGS  -o array_efuns.i array_efuns.c ; then \
+  if test -f array_efuns.o && diff -wh >/dev/null 2>/dev/null array_efuns.i array_efuns.i~ ; then \
+    echo Not recompiling array_efuns.o ; \
+    touch array_efuns.o ; \
+  else \
+    if test -f "array_efuns.i~" ; then rm array_efuns.i~; fi ; \
+    if gcc -c $FLAGS -o array_efuns.o array_efuns.i ; then \
+      mv array_efuns.i array_efuns.i~ ;\
+    else \
+      exit $? ;\
+    fi ;\
+  fi ;\
+else \
+  exit $? ;\
+fi ;\
+) ;
+( echo gcc -c $FLAGS -o main.o main.c ; \
+if gcc -E $FLAGS  -o main.i main.c ; then \
+  if test -f main.o && diff -wh >/dev/null 2>/dev/null main.i main.i~ ; then \
+    echo Not recompiling main.o ; \
+    touch main.o ; \
+  else \
+    if test -f "main.i~" ; then rm main.i~; fi ; \
+    if gcc -c $FLAGS -o main.o main.i ; then \
+      mv main.i main.i~ ;\
+    else \
+      exit $? ;\
+    fi ;\
+  fi ;\
+else \
+  exit $? ;\
+fi ;\
+) ;
+( echo gcc -c $FLAGS -o interpret.o interpret.c ; \
+if gcc -E $FLAGS  -o interpret.i interpret.c ; then \
+  if test -f interpret.o && diff -wh >/dev/null 2>/dev/null interpret.i interpret.i~ ; then \
+    echo Not recompiling interpret.o ; \
+    touch interpret.o ; \
+  else \
+    if test -f "interpret.i~" ; then rm interpret.i~; fi ; \
+    if gcc -c $FLAGS -o interpret.o interpret.i ; then \
+      mv interpret.i interpret.i~ ;\
+    else \
+      exit $? ;\
+    fi ;\
+  fi ;\
+else \
+  exit $? ;\
+fi ;\
+) ;
+( echo gcc -c $FLAGS -o simulate.o simulate.c ; \
+if gcc -E $FLAGS  -o simulate.i simulate.c ; then \
+  if test -f simulate.o && diff -wh >/dev/null 2>/dev/null simulate.i simulate.i~ ; then \
+    echo Not recompiling simulate.o ; \
+    touch simulate.o ; \
+  else \
+    if test -f "simulate.i~" ; then rm simulate.i~; fi ; \
+    if gcc -c $FLAGS -o simulate.o simulate.i ; then \
+      mv simulate.i simulate.i~ ;\
+    else \
+      exit $? ;\
+    fi ;\
+  fi ;\
+else \
+  exit $? ;\
+fi ;\
+) ;
+( echo gcc -c $FLAGS -o object.o object.c ; \
+if gcc -E $FLAGS  -o object.i object.c ; then \
+  if test -f object.o && diff -wh >/dev/null 2>/dev/null object.i object.i~ ; then \
+    echo Not recompiling object.o ; \
+    touch object.o ; \
+  else \
+    if test -f "object.i~" ; then rm object.i~; fi ; \
+    if gcc -c $FLAGS -o object.o object.i ; then \
+      mv object.i object.i~ ;\
+    else \
+      exit $? ;\
+    fi ;\
+  fi ;\
+else \
+  exit $? ;\
+fi ;\
+) ;
+( echo gcc -c $FLAGS -o backend.o backend.c ; \
+if gcc -E $FLAGS  -o backend.i backend.c ; then \
+  if test -f backend.o && diff -wh >/dev/null 2>/dev/null backend.i backend.i~ ; then \
+    echo Not recompiling backend.o ; \
+    touch backend.o ; \
+  else \
+    if test -f "backend.i~" ; then rm backend.i~; fi ; \
+    if gcc -c $FLAGS -o backend.o backend.i ; then \
+      mv backend.i backend.i~ ;\
+    else \
+      exit $? ;\
+    fi ;\
+  fi ;\
+else \
+  exit $? ;\
+fi ;\
+) ;
+( echo gcc -c $FLAGS -o array.o array.c ; \
+if gcc -E $FLAGS  -o array.i array.c ; then \
+  if test -f array.o && diff -wh >/dev/null 2>/dev/null array.i array.i~ ; then \
+    echo Not recompiling array.o ; \
+    touch array.o ; \
+  else \
+    if test -f "array.i~" ; then rm array.i~; fi ; \
+    if gcc -c $FLAGS -o array.o array.i ; then \
+      mv array.i array.i~ ;\
+    else \
+      exit $? ;\
+    fi ;\
+  fi ;\
+else \
+  exit $? ;\
+fi ;\
+) ;
+( echo gcc -c $FLAGS -o stralloc.o stralloc.c ; \
+if gcc -E $FLAGS  -o stralloc.i stralloc.c ; then \
+  if test -f stralloc.o && diff -wh >/dev/null 2>/dev/null stralloc.i stralloc.i~ ; then \
+    echo Not recompiling stralloc.o ; \
+    touch stralloc.o ; \
+  else \
+    if test -f "stralloc.i~" ; then rm stralloc.i~; fi ; \
+    if gcc -c $FLAGS -o stralloc.o stralloc.i ; then \
+      mv stralloc.i stralloc.i~ ;\
+    else \
+      exit $? ;\
+    fi ;\
+  fi ;\
+else \
+  exit $? ;\
+fi ;\
+) ;
+( echo gcc -c $FLAGS -o comm.o comm.c ; \
+if gcc -E $FLAGS  -o comm.i comm.c ; then \
+  if test -f comm.o && diff -wh >/dev/null 2>/dev/null comm.i comm.i~ ; then \
+    echo Not recompiling comm.o ; \
+    touch comm.o ; \
+  else \
+    if test -f "comm.i~" ; then rm comm.i~; fi ; \
+    if gcc -c $FLAGS -o comm.o comm.i ; then \
+      mv comm.i comm.i~ ;\
+    else \
+      exit $? ;\
+    fi ;\
+  fi ;\
+else \
+  exit $? ;\
+fi ;\
+) ;
+( echo gcc -c $FLAGS -o regexp.o regexp.c ; \
+if gcc -E $FLAGS  -o regexp.i regexp.c ; then \
+  if test -f regexp.o && diff -wh >/dev/null 2>/dev/null regexp.i regexp.i~ ; then \
+    echo Not recompiling regexp.o ; \
+    touch regexp.o ; \
+  else \
+    if test -f "regexp.i~" ; then rm regexp.i~; fi ; \
+    if gcc -c $FLAGS -o regexp.o regexp.i ; then \
+      mv regexp.i regexp.i~ ;\
+    else \
+      exit $? ;\
+    fi ;\
+  fi ;\
+else \
+  exit $? ;\
+fi ;\
+) ;
+( echo gcc -c $FLAGS -o mapping.o mapping.c ; \
+if gcc -E $FLAGS  -o mapping.i mapping.c ; then \
+  if test -f mapping.o && diff -wh >/dev/null 2>/dev/null mapping.i mapping.i~ ; then \
+    echo Not recompiling mapping.o ; \
+    touch mapping.o ; \
+  else \
+    if test -f "mapping.i~" ; then rm mapping.i~; fi ; \
+    if gcc -c $FLAGS -o mapping.o mapping.i ; then \
+      mv mapping.i mapping.i~ ;\
+    else \
+      exit $? ;\
+    fi ;\
+  fi ;\
+else \
+  exit $? ;\
+fi ;\
+) ;
+( echo gcc -c $FLAGS -o sysmalloc.o sysmalloc.c ; \
+if gcc -E $FLAGS  -o sysmalloc.i sysmalloc.c ; then \
+  if test -f sysmalloc.o && diff -wh >/dev/null 2>/dev/null sysmalloc.i sysmalloc.i~ ; then \
+    echo Not recompiling sysmalloc.o ; \
+    touch sysmalloc.o ; \
+  else \
+    if test -f "sysmalloc.i~" ; then rm sysmalloc.i~; fi ; \
+    if gcc -c $FLAGS -o sysmalloc.o sysmalloc.i ; then \
+      mv sysmalloc.i sysmalloc.i~ ;\
+    else \
+      exit $? ;\
+    fi ;\
+  fi ;\
+else \
+  exit $? ;\
+fi ;\
+) ;
+( echo gcc -c $FLAGS -o call_out.o call_out.c ; \
+if gcc -E $FLAGS  -o call_out.i call_out.c ; then \
+  if test -f call_out.o && diff -wh >/dev/null 2>/dev/null call_out.i call_out.i~ ; then \
+    echo Not recompiling call_out.o ; \
+    touch call_out.o ; \
+  else \
+    if test -f "call_out.i~" ; then rm call_out.i~; fi ; \
+    if gcc -c $FLAGS -o call_out.o call_out.i ; then \
+      mv call_out.i call_out.i~ ;\
+    else \
+      exit $? ;\
+    fi ;\
+  fi ;\
+else \
+  exit $? ;\
+fi ;\
+) ;
+( echo gcc -c $FLAGS -o otable.o otable.c ; \
+if gcc -E $FLAGS  -o otable.i otable.c ; then \
+  if test -f otable.o && diff -wh >/dev/null 2>/dev/null otable.i otable.i~ ; then \
+    echo Not recompiling otable.o ; \
+    touch otable.o ; \
+  else \
+    if test -f "otable.i~" ; then rm otable.i~; fi ; \
+    if gcc -c $FLAGS -o otable.o otable.i ; then \
+      mv otable.i otable.i~ ;\
+    else \
+      exit $? ;\
+    fi ;\
+  fi ;\
+else \
+  exit $? ;\
+fi ;\
+) ;
+( echo gcc -c $FLAGS -o simul_efun.o simul_efun.c ; \
+if gcc -E $FLAGS  -o simul_efun.i simul_efun.c ; then \
+  if test -f simul_efun.o && diff -wh >/dev/null 2>/dev/null simul_efun.i simul_efun.i~ ; then \
+    echo Not recompiling simul_efun.o ; \
+    touch simul_efun.o ; \
+  else \
+    if test -f "simul_efun.i~" ; then rm simul_efun.i~; fi ; \
+    if gcc -c $FLAGS -o simul_efun.o simul_efun.i ; then \
+      mv simul_efun.i simul_efun.i~ ;\
+    else \
+      exit $? ;\
+    fi ;\
+  fi ;\
+else \
+  exit $? ;\
+fi ;\
+) ;
+( echo gcc -c $FLAGS -o sprintf.o sprintf.c ; \
+if gcc -E $FLAGS  -o sprintf.i sprintf.c ; then \
+  if test -f sprintf.o && diff -wh >/dev/null 2>/dev/null sprintf.i sprintf.i~ ; then \
+    echo Not recompiling sprintf.o ; \
+    touch sprintf.o ; \
+  else \
+    if test -f "sprintf.i~" ; then rm sprintf.i~; fi ; \
+    if gcc -c $FLAGS -o sprintf.o sprintf.i ; then \
+      mv sprintf.i sprintf.i~ ;\
+    else \
+      exit $? ;\
+    fi ;\
+  fi ;\
+else \
+  exit $? ;\
+fi ;\
+) ;
+( echo gcc -c $FLAGS -o mapping_efuns.o mapping_efuns.c ; \
+if gcc -E $FLAGS  -o mapping_efuns.i mapping_efuns.c ; then \
+  if test -f mapping_efuns.o && diff -wh >/dev/null 2>/dev/null mapping_efuns.i mapping_efuns.i~ ; then \
+    echo Not recompiling mapping_efuns.o ; \
+    touch mapping_efuns.o ; \
+  else \
+    if test -f "mapping_efuns.i~" ; then rm mapping_efuns.i~; fi ; \
+    if gcc -c $FLAGS -o mapping_efuns.o mapping_efuns.i ; then \
+      mv mapping_efuns.i mapping_efuns.i~ ;\
+    else \
+      exit $? ;\
+    fi ;\
+  fi ;\
+else \
+  exit $? ;\
+fi ;\
+) ;
+( echo gcc -c $FLAGS -o opcodes.o opcodes.c ; \
+if gcc -E $FLAGS  -o opcodes.i opcodes.c ; then \
+  if test -f opcodes.o && diff -wh >/dev/null 2>/dev/null opcodes.i opcodes.i~ ; then \
+    echo Not recompiling opcodes.o ; \
+    touch opcodes.o ; \
+  else \
+    if test -f "opcodes.i~" ; then rm opcodes.i~; fi ; \
+    if gcc -c $FLAGS -o opcodes.o opcodes.i ; then \
+      mv opcodes.i opcodes.i~ ;\
+    else \
+      exit $? ;\
+    fi ;\
+  fi ;\
+else \
+  exit $? ;\
+fi ;\
+) ;
+( echo gcc -c $FLAGS -o hash.o hash.c ; \
+if gcc -E $FLAGS  -o hash.i hash.c ; then \
+  if test -f hash.o && diff -wh >/dev/null 2>/dev/null hash.i hash.i~ ; then \
+    echo Not recompiling hash.o ; \
+    touch hash.o ; \
+  else \
+    if test -f "hash.i~" ; then rm hash.i~; fi ; \
+    if gcc -c $FLAGS -o hash.o hash.i ; then \
+      mv hash.i hash.i~ ;\
+    else \
+      exit $? ;\
+    fi ;\
+  fi ;\
+else \
+  exit $? ;\
+fi ;\
+) ;
+( echo gcc -c $FLAGS -o more_hashes.o more_hashes.c ; \
+if gcc -E $FLAGS  -o more_hashes.i more_hashes.c ; then \
+  if test -f more_hashes.o && diff -wh >/dev/null 2>/dev/null more_hashes.i more_hashes.i~ ; then \
+    echo Not recompiling more_hashes.o ; \
+    touch more_hashes.o ; \
+  else \
+    if test -f "more_hashes.i~" ; then rm more_hashes.i~; fi ; \
+    if gcc -c $FLAGS -o more_hashes.o more_hashes.i ; then \
+      mv more_hashes.i more_hashes.i~ ;\
+    else \
+      exit $? ;\
+    fi ;\
+  fi ;\
+else \
+  exit $? ;\
+fi ;\
+) ;
+( echo gcc -c $FLAGS -o msort2.o msort2.c ; \
+if gcc -E $FLAGS  -o msort2.i msort2.c ; then \
+  if test -f msort2.o && diff -wh >/dev/null 2>/dev/null msort2.i msort2.i~ ; then \
+    echo Not recompiling msort2.o ; \
+    touch msort2.o ; \
+  else \
+    if test -f "msort2.i~" ; then rm msort2.i~; fi ; \
+    if gcc -c $FLAGS -o msort2.o msort2.i ; then \
+      mv msort2.i msort2.i~ ;\
+    else \
+      exit $? ;\
+    fi ;\
+  fi ;\
+else \
+  exit $? ;\
+fi ;\
+) ;
+( echo gcc -c $FLAGS -o fsort.o fsort.c ; \
+if gcc -E $FLAGS  -o fsort.i fsort.c ; then \
+  if test -f fsort.o && diff -wh >/dev/null 2>/dev/null fsort.i fsort.i~ ; then \
+    echo Not recompiling fsort.o ; \
+    touch fsort.o ; \
+  else \
+    if test -f "fsort.i~" ; then rm fsort.i~; fi ; \
+    if gcc -c $FLAGS -o fsort.o fsort.i ; then \
+      mv fsort.i fsort.i~ ;\
+    else \
+      exit $? ;\
+    fi ;\
+  fi ;\
+else \
+  exit $? ;\
+fi ;\
+) ;
+( echo gcc -c $FLAGS -o list.o list.c ; \
+if gcc -E $FLAGS  -o list.i list.c ; then \
+  if test -f list.o && diff -wh >/dev/null 2>/dev/null list.i list.i~ ; then \
+    echo Not recompiling list.o ; \
+    touch list.o ; \
+  else \
+    if test -f "list.i~" ; then rm list.i~; fi ; \
+    if gcc -c $FLAGS -o list.o list.i ; then \
+      mv list.i list.i~ ;\
+    else \
+      exit $? ;\
+    fi ;\
+  fi ;\
+else \
+  exit $? ;\
+fi ;\
+) ;
+( echo gcc -c $FLAGS -o save_objectII.o save_objectII.c ; \
+if gcc -E $FLAGS  -o save_objectII.i save_objectII.c ; then \
+  if test -f save_objectII.o && diff -wh >/dev/null 2>/dev/null save_objectII.i save_objectII.i~ ; then \
+    echo Not recompiling save_objectII.o ; \
+    touch save_objectII.o ; \
+  else \
+    if test -f "save_objectII.i~" ; then rm save_objectII.i~; fi ; \
+    if gcc -c $FLAGS -o save_objectII.o save_objectII.i ; then \
+      mv save_objectII.i save_objectII.i~ ;\
+    else \
+      exit $? ;\
+    fi ;\
+  fi ;\
+else \
+  exit $? ;\
+fi ;\
+) ;
+( echo gcc -c $FLAGS -o instrs.o instrs.c ; \
+if gcc -E $FLAGS  -o instrs.i instrs.c ; then \
+  if test -f instrs.o && diff -wh >/dev/null 2>/dev/null instrs.i instrs.i~ ; then \
+    echo Not recompiling instrs.o ; \
+    touch instrs.o ; \
+  else \
+    if test -f "instrs.i~" ; then rm instrs.i~; fi ; \
+    if gcc -c $FLAGS -o instrs.o instrs.i ; then \
+      mv instrs.i instrs.i~ ;\
+    else \
+      exit $? ;\
+    fi ;\
+  fi ;\
+else \
+  exit $? ;\
+fi ;\
+) ;
+( echo gcc -c $FLAGS -o math.o math.c ; \
+if gcc -E $FLAGS  -o math.i math.c ; then \
+  if test -f math.o && diff -wh >/dev/null 2>/dev/null math.i math.i~ ; then \
+    echo Not recompiling math.o ; \
+    touch math.o ; \
+  else \
+    if test -f "math.i~" ; then rm math.i~; fi ; \
+    if gcc -c $FLAGS -o math.o math.i ; then \
+      mv math.i math.i~ ;\
+    else \
+      exit $? ;\
+    fi ;\
+  fi ;\
+else \
+  exit $? ;\
+fi ;\
+) ;
+( echo gcc -c $FLAGS -o socket_efuns.o socket_efuns.c ; \
+if gcc -E $FLAGS  -o socket_efuns.i socket_efuns.c ; then \
+  if test -f socket_efuns.o && diff -wh >/dev/null 2>/dev/null socket_efuns.i socket_efuns.i~ ; then \
+    echo Not recompiling socket_efuns.o ; \
+    touch socket_efuns.o ; \
+  else \
+    if test -f "socket_efuns.i~" ; then rm socket_efuns.i~; fi ; \
+    if gcc -c $FLAGS -o socket_efuns.o socket_efuns.i ; then \
+      mv socket_efuns.i socket_efuns.i~ ;\
+    else \
+      exit $? ;\
+    fi ;\
+  fi ;\
+else \
+  exit $? ;\
+fi ;\
+) ;
+( echo gcc -c $FLAGS -o socket.o socket.c ; \
+if gcc -E $FLAGS  -o socket.i socket.c ; then \
+  if test -f socket.o && diff -wh >/dev/null 2>/dev/null socket.i socket.i~ ; then \
+    echo Not recompiling socket.o ; \
+    touch socket.o ; \
+  else \
+    if test -f "socket.i~" ; then rm socket.i~; fi ; \
+    if gcc -c $FLAGS -o socket.o socket.i ; then \
+      mv socket.i socket.i~ ;\
+    else \
+      exit $? ;\
+    fi ;\
+  fi ;\
+else \
+  exit $? ;\
+fi ;\
+) ;
+( echo gcc -c $FLAGS -o socket_ctrl.o socket_ctrl.c ; \
+if gcc -E $FLAGS  -o socket_ctrl.i socket_ctrl.c ; then \
+  if test -f socket_ctrl.o && diff -wh >/dev/null 2>/dev/null socket_ctrl.i socket_ctrl.i~ ; then \
+    echo Not recompiling socket_ctrl.o ; \
+    touch socket_ctrl.o ; \
+  else \
+    if test -f "socket_ctrl.i~" ; then rm socket_ctrl.i~; fi ; \
+    if gcc -c $FLAGS -o socket_ctrl.o socket_ctrl.i ; then \
+      mv socket_ctrl.i socket_ctrl.i~ ;\
+    else \
+      exit $? ;\
+    fi ;\
+  fi ;\
+else \
+  exit $? ;\
+fi ;\
+) ;
+( echo gcc -c $FLAGS -o socket_err.o socket_err.c ; \
+if gcc -E $FLAGS  -o socket_err.i socket_err.c ; then \
+  if test -f socket_err.o && diff -wh >/dev/null 2>/dev/null socket_err.i socket_err.i~ ; then \
+    echo Not recompiling socket_err.o ; \
+    touch socket_err.o ; \
+  else \
+    if test -f "socket_err.i~" ; then rm socket_err.i~; fi ; \
+    if gcc -c $FLAGS -o socket_err.o socket_err.i ; then \
+      mv socket_err.i socket_err.i~ ;\
+    else \
+      exit $? ;\
+    fi ;\
+  fi ;\
+else \
+  exit $? ;\
+fi ;\
+) ;
+( echo gcc -c $FLAGS -o operators.o operators.c ; \
+if gcc -E $FLAGS  -o operators.i operators.c ; then \
+  if test -f operators.o && diff -wh >/dev/null 2>/dev/null operators.i operators.i~ ; then \
+    echo Not recompiling operators.o ; \
+    touch operators.o ; \
+  else \
+    if test -f "operators.i~" ; then rm operators.i~; fi ; \
+    if gcc -c $FLAGS -o operators.o operators.i ; then \
+      mv operators.i operators.i~ ;\
+    else \
+      exit $? ;\
+    fi ;\
+  fi ;\
+else \
+  exit $? ;\
+fi ;\
+) ;
+( echo gcc -c $FLAGS -o patchlevel.o patchlevel.c ; \
+if gcc -E $FLAGS  -o patchlevel.i patchlevel.c ; then \
+  if test -f patchlevel.o && diff -wh >/dev/null 2>/dev/null patchlevel.i patchlevel.i~ ; then \
+    echo Not recompiling patchlevel.o ; \
+    touch patchlevel.o ; \
+  else \
+    if test -f "patchlevel.i~" ; then rm patchlevel.i~; fi ; \
+    if gcc -c $FLAGS -o patchlevel.o patchlevel.i ; then \
+      mv patchlevel.i patchlevel.i~ ;\
+    else \
+      exit $? ;\
+    fi ;\
+  fi ;\
+else \
+  exit $? ;\
+fi ;\
+) ;
+( echo gcc -c $FLAGS -o batch_efuns.o batch_efuns.c ; \
+if gcc -E $FLAGS  -o batch_efuns.i batch_efuns.c ; then \
+  if test -f batch_efuns.o && diff -wh >/dev/null 2>/dev/null batch_efuns.i batch_efuns.i~ ; then \
+    echo Not recompiling batch_efuns.o ; \
+    touch batch_efuns.o ; \
+  else \
+    if test -f "batch_efuns.i~" ; then rm batch_efuns.i~; fi ; \
+    if gcc -c $FLAGS -o batch_efuns.o batch_efuns.i ; then \
+      mv batch_efuns.i batch_efuns.i~ ;\
+    else \
+      exit $? ;\
+    fi ;\
+  fi ;\
+else \
+  exit $? ;\
+fi ;\
+) ;
+( echo gcc -c $FLAGS -o dbase.o dbase.c ; \
+if gcc -E $FLAGS  -o dbase.i dbase.c ; then \
+  if test -f dbase.o && diff -wh >/dev/null 2>/dev/null dbase.i dbase.i~ ; then \
+    echo Not recompiling dbase.o ; \
+    touch dbase.o ; \
+  else \
+    if test -f "dbase.i~" ; then rm dbase.i~; fi ; \
+    if gcc -c $FLAGS -o dbase.o dbase.i ; then \
+      mv dbase.i dbase.i~ ;\
+    else \
+      exit $? ;\
+    fi ;\
+  fi ;\
+else \
+  exit $? ;\
+fi ;\
+) ;
+( echo gcc -c $FLAGS -o dbase_efuns.o dbase_efuns.c ; \
+if gcc -E $FLAGS  -o dbase_efuns.i dbase_efuns.c ; then \
+  if test -f dbase_efuns.o && diff -wh >/dev/null 2>/dev/null dbase_efuns.i dbase_efuns.i~ ; then \
+    echo Not recompiling dbase_efuns.o ; \
+    touch dbase_efuns.o ; \
+  else \
+    if test -f "dbase_efuns.i~" ; then rm dbase_efuns.i~; fi ; \
+    if gcc -c $FLAGS -o dbase_efuns.o dbase_efuns.i ; then \
+      mv dbase_efuns.i dbase_efuns.i~ ;\
+    else \
+      exit $? ;\
+    fi ;\
+  fi ;\
+else \
+  exit $? ;\
+fi ;\
+) ;
+( echo gcc -c $FLAGS -o dynamic_buffer.o dynamic_buffer.c ; \
+if gcc -E $FLAGS  -o dynamic_buffer.i dynamic_buffer.c ; then \
+  if test -f dynamic_buffer.o && diff -wh >/dev/null 2>/dev/null dynamic_buffer.i dynamic_buffer.i~ ; then \
+    echo Not recompiling dynamic_buffer.o ; \
+    touch dynamic_buffer.o ; \
+  else \
+    if test -f "dynamic_buffer.i~" ; then rm dynamic_buffer.i~; fi ; \
+    if gcc -c $FLAGS -o dynamic_buffer.o dynamic_buffer.i ; then \
+      mv dynamic_buffer.i dynamic_buffer.i~ ;\
+    else \
+      exit $? ;\
+    fi ;\
+  fi ;\
+else \
+  exit $? ;\
+fi ;\
+) ;
+( echo gcc -c $FLAGS -o ualarm.o ualarm.c ; \
+if gcc -E $FLAGS  -o ualarm.i ualarm.c ; then \
+  if test -f ualarm.o && diff -wh >/dev/null 2>/dev/null ualarm.i ualarm.i~ ; then \
+    echo Not recompiling ualarm.o ; \
+    touch ualarm.o ; \
+  else \
+    if test -f "ualarm.i~" ; then rm ualarm.i~; fi ; \
+    if gcc -c $FLAGS -o ualarm.o ualarm.i ; then \
+      mv ualarm.i ualarm.i~ ;\
+    else \
+      exit $? ;\
+    fi ;\
+  fi ;\
+else \
+  exit $? ;\
+fi ;\
+) ;
+./config.status
+touch Makefile machine.h
+echo Run make again.
+exit 1
+mv driver driver.old
+cat /usr/local/lpc4/src/patchlevel.h
+$CC $FLAGS lang.o las.o lex.o efuns.o list_efuns.o array_efuns.o main.o interpret.o simulate.o object.o backend.o array.o stralloc.o comm.o regexp.o mapping.o sysmalloc.o call_out.o otable.o simul_efun.o sprintf.o mapping_efuns.o opcodes.o hash.o port.o more_hashes.o msort2.o fsort.o list.o save_objectII.o instrs.o math.o socket_efuns.o socket.o socket_ctrl.o socket_err.o operators.o patchlevel.o batch_efuns.o dbase.o dbase_efuns.o dynamic_buffer.o   ualarm.o -o driver -lm -lsocket -lnsl 
+set +x

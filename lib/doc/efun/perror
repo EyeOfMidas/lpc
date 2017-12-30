@@ -1,0 +1,9 @@
+NAME
+	perror - write to stderr
+
+SYNTAX
+	void perror(string s);
+
+DESCRIPTION
+	This function can only be called from batch mode. It writes the string
+	to stderr, nothing more, nothing less.

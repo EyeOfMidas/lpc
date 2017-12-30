@@ -1,0 +1,211 @@
+efun_defs.o : efun_defs.c 
+lang.o : lang.c global.h config.h machine.h \
+  port.h simul_efun.h interpret.h \
+  array.h object.h exec.h \
+  instrs.h incralloc.h operators.h \
+  stralloc.h main.h las.h \
+  simulate.h lex.h 
+make_func.o : make_func.c global.h config.h \
+  machine.h port.h interpret.h 
+alloca.o : alloca.c 
+array.o : array.c global.h config.h \
+  machine.h port.h array.h interpret.h \
+  object.h regexp.h exec.h \
+  main.h stralloc.h simulate.h \
+  operators.h 
+array_efuns.o : array_efuns.c efuns.h \
+  global.h config.h machine.h port.h \
+  interpret.h object.h exec.h \
+  efun_protos.h lang.h sent.h stralloc.h \
+  array.h simulate.h save_objectII.h \
+  dynamic_buffer.h operators.h main.h 
+backend.o : backend.c global.h config.h \
+  machine.h port.h interpret.h object.h \
+  exec.h comm.h debug.h \
+  dbase_efuns.h call_out.h backend.h \
+  dynamic_buffer.h simulate.h main.h 
+batch_efuns.o : batch_efuns.c efuns.h \
+  global.h config.h machine.h port.h \
+  interpret.h object.h exec.h \
+  efun_protos.h lang.h sent.h main.h \
+  dynamic_buffer.h simulate.h stralloc.h 
+call_out.o : call_out.c efuns.h global.h \
+  config.h machine.h port.h interpret.h \
+  object.h exec.h efun_protos.h lang.h \
+  sent.h array.h call_out.h \
+  dynamic_buffer.h main.h simulate.h 
+comm.o : comm.c global.h config.h \
+  machine.h port.h interpret.h comm.h \
+  socket_efuns.h object.h sent.h \
+  debug.h comm1.h main.h \
+  stralloc.h simulate.h exec.h 
+dbase.o : dbase.c global.h config.h \
+  machine.h port.h dbase.h 
+dbase_efuns.o : dbase_efuns.c efuns.h \
+  global.h config.h machine.h port.h \
+  interpret.h object.h exec.h \
+  efun_protos.h lang.h sent.h simulate.h \
+  array.h stralloc.h dbase.h 
+debugmalloc.o : debugmalloc.c 
+dynamic_buffer.o : dynamic_buffer.c global.h \
+  config.h machine.h port.h dynamic_buffer.h \
+  stralloc.h interpret.h simulate.h \
+  main.h 
+efuns.o : efuns.c efuns.h global.h \
+  config.h machine.h port.h interpret.h \
+  object.h exec.h efun_protos.h lang.h \
+  sent.h simulate.h array.h \
+  main.h stralloc.h call_out.h \
+  save_objectII.h dynamic_buffer.h backend.h \
+  otable.h dbase_efuns.h hash.h 
+fsort.o : fsort.c global.h config.h \
+  machine.h port.h interpret.h object.h \
+  regexp.h exec.h simulate.h 
+func_spec.o : func_spec.c config.h machine.h 
+hash.o : hash.c global.h config.h \
+  machine.h port.h exec.h interpret.h \
+  object.h array.h stralloc.h 
+instrs.o : instrs.c global.h config.h \
+  machine.h port.h 
+interpret.o : interpret.c efuns.h global.h \
+  config.h machine.h port.h interpret.h \
+  object.h exec.h efun_protos.h lang.h \
+  sent.h array.h simulate.h \
+  simul_efun.h instrs.h comm.h \
+  list.h operators.h debug.h \
+  main.h stralloc.h save_objectII.h \
+  dynamic_buffer.h opcodes.h lex.h \
+  regexp.h 
+las.o : las.c global.h config.h \
+  machine.h port.h lang.h interpret.h \
+  las.h instrs.h array.h \
+  exec.h object.h simul_efun.h \
+  incralloc.h stralloc.h main.h \
+  operators.h dynamic_buffer.h lex.h \
+  mapping.h simulate.h save_objectII.h 
+lex.o : lex.c efuns.h global.h \
+  config.h machine.h port.h interpret.h \
+  object.h exec.h efun_protos.h lang.h \
+  sent.h array.h lex.h \
+  instrs.h opc_cost.h main.h stralloc.h \
+  simulate.h dynamic_buffer.h simul_efun.h \
+  efun_defs.c 
+list.o : list.c global.h config.h \
+  machine.h port.h array.h interpret.h \
+  list.h object.h stralloc.h \
+  mapping.h 
+list_efuns.o : list_efuns.c efuns.h \
+  global.h config.h machine.h port.h \
+  interpret.h object.h exec.h \
+  efun_protos.h lang.h sent.h array.h \
+  list.h 
+lvalue.o : lvalue.c 
+main.o : main.c global.h config.h \
+  machine.h port.h simulate.h interpret.h \
+  object.h exec.h lex.h \
+  main.h array.h stralloc.h \
+  backend.h simul_efun.h 
+mapping.o : mapping.c global.h config.h \
+  machine.h port.h array.h interpret.h \
+  object.h regexp.h exec.h \
+  main.h list.h simulate.h 
+mapping_efuns.o : mapping_efuns.c efuns.h \
+  global.h config.h machine.h port.h \
+  interpret.h object.h exec.h \
+  efun_protos.h lang.h sent.h array.h \
+  mapping.h simulate.h 
+math.o : math.c efuns.h global.h \
+  config.h machine.h port.h interpret.h \
+  object.h exec.h efun_protos.h lang.h \
+  sent.h simulate.h 
+more_hashes.o : more_hashes.c global.h \
+  config.h machine.h port.h interpret.h \
+  object.h exec.h main.h \
+  dynamic_buffer.h hash.h simulate.h 
+msort2.o : msort2.c global.h config.h \
+  machine.h port.h 
+object.o : object.c global.h config.h \
+  machine.h port.h simulate.h interpret.h \
+  object.h sent.h exec.h \
+  main.h stralloc.h array.h 
+opcodes.o : opcodes.c efuns.h global.h \
+  config.h machine.h port.h interpret.h \
+  object.h exec.h efun_protos.h lang.h \
+  sent.h array.h simul_efun.h \
+  stralloc.h mapping.h list.h \
+  main.h opcodes.h simulate.h \
+  regexp.h 
+operators.o : operators.c efuns.h global.h \
+  config.h machine.h port.h interpret.h \
+  object.h exec.h efun_protos.h lang.h \
+  sent.h list.h array.h \
+  main.h stralloc.h opcodes.h \
+  simulate.h operators.h 
+otable.o : otable.c global.h config.h \
+  machine.h port.h interpret.h object.h \
+  exec.h main.h otable.h \
+  dynamic_buffer.h hash.h simulate.h 
+patch_level.o : patch_level.c patchlevel.h \
+  global.h config.h machine.h port.h 
+patchlevel.o : patchlevel.c efuns.h \
+  global.h config.h machine.h port.h \
+  interpret.h object.h exec.h \
+  efun_protos.h lang.h sent.h patchlevel.h 
+port.o : port.c global.h config.h \
+  machine.h port.h simulate.h 
+qsort.o : qsort.c main.h 
+regexp.o : regexp.c global.h config.h \
+  machine.h port.h regexp.h main.h \
+  simulate.h 
+save_objectII.o : save_objectII.c global.h \
+  config.h machine.h port.h array.h \
+  interpret.h exec.h object.h \
+  main.h stralloc.h save_objectII.h \
+  dynamic_buffer.h efun_protos.h simulate.h \
+  regexp.h 
+simul_efun.o : simul_efun.c efuns.h \
+  global.h config.h machine.h port.h \
+  interpret.h object.h exec.h \
+  efun_protos.h lang.h sent.h main.h \
+  simulate.h simul_efun.h stralloc.h 
+simulate.o : simulate.c global.h config.h \
+  machine.h port.h array.h interpret.h \
+  simulate.h object.h sent.h \
+  exec.h comm.h main.h \
+  dbase_efuns.h stralloc.h call_out.h \
+  lex.h backend.h dynamic_buffer.h \
+  otable.h socket_efuns.h simul_efun.h 
+smalloc.o : smalloc.c global.h config.h \
+  machine.h port.h dynamic_buffer.h \
+  simulate.h 
+socket.o : socket.c efuns.h global.h \
+  config.h machine.h port.h interpret.h \
+  object.h exec.h efun_protos.h lang.h \
+  sent.h array.h comm.h \
+  socket_err.h socket_efuns.h simulate.h \
+  stralloc.h 
+socket_ctrl.o : socket_ctrl.c global.h \
+  config.h machine.h port.h socket_efuns.h \
+  interpret.h comm.h 
+socket_efuns.o : socket_efuns.c global.h \
+  config.h machine.h port.h comm.h \
+  interpret.h object.h exec.h \
+  debug.h socket_efuns.h socket_err.h \
+  main.h stralloc.h dynamic_buffer.h \
+  simulate.h 
+socket_err.o : socket_err.c socket_err.h 
+sprintf.o : sprintf.c efuns.h global.h \
+  config.h machine.h port.h interpret.h \
+  object.h exec.h efun_protos.h lang.h \
+  sent.h array.h save_objectII.h \
+  dynamic_buffer.h stralloc.h simulate.h \
+  main.h 
+stralloc.o : stralloc.c global.h config.h \
+  machine.h port.h array.h interpret.h \
+  object.h comm1.h exec.h \
+  call_out.h sent.h main.h \
+  stralloc.h dynamic_buffer.h hash.h \
+  simulate.h socket_efuns.h comm.h \
+  simul_efun.h operators.h save_objectII.h 
+sysmalloc.o : sysmalloc.c 
+ualarm.o : ualarm.c 

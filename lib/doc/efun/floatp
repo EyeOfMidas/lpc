@@ -1,0 +1,12 @@
+NAME
+	floatp - is the argument a float?
+
+SYNTAX
+	int floatp(mixed f);
+
+DESCRIPTION
+	Returns 1 if the argument is a float, otherwise zero.
+
+SEE ALSO
+	listp, intp, objectp, mappingp, functionp, stringp
+	

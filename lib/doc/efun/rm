@@ -1,0 +1,11 @@
+NAME
+	rm - delete a file.
+
+SYNTAX
+	int rm(string file);
+
+DESCRIPTION
+	Remove file file. Returns 0 for failure and 1 for success.
+
+SEE ALSO
+	mkdir, rmdir

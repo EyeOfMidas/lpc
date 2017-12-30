@@ -1,0 +1,17 @@
+NAME
+	query_valid_force - check permission to force.
+
+SYNTAX
+	int query_valid_force(string s) { ... }
+
+DESCRTIPTION
+	When command() is called with 2 arguments, this function is called
+	to see if the object that called command() (which will be
+	previous_object() in this function) may force you to do the command
+	s. If not, this function should return 0. Note that if there is no
+	query_valid_force() in your object, all forcing is allowed.
+
+SEE ALSO
+	efun/command, efun/add_action
+	
+

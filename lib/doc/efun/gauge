@@ -1,0 +1,15 @@
+NAME
+	gauge - measure eval nodes
+
+SYNTAX
+	int guage(expression);
+
+DESCRIPTION
+	Return the number of eval nodes used to evaluate the expression.
+	Eval nodes should approximately represent cpu usage.
+
+BUGS
+	Eval nodes doesn't correspond very well to the actual cpu usage.
+
+SEE ALSO
+	catch

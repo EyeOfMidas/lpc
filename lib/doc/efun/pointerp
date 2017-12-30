@@ -1,0 +1,11 @@
+NAME
+	pointerp - is the argument an array?
+
+SYNTAX
+	int pointerp(mixed arg);
+
+DESCRIPTION
+	Return 1 if arg is a pointer.
+
+SEE ALSO
+	intp, stringp, objectp, mappingp, functionp, floatp

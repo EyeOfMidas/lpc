@@ -1,0 +1,14 @@
+NAME
+	set_socket_mode - set the mode for a socket
+
+SYNTAX
+	int set_socket_mode(int fd,int mode);
+
+DESCRIPTION
+	Set the mode for a socket fd, note that you can only change
+	the submodes BUFFERED_OUTPUT and BUFFERED_INPUT. Returns 1 for
+	success and 0 for failiure. See socket_create for more details
+	on the modes.
+
+SEE ALSO
+	socket_create

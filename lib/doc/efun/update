@@ -1,0 +1,19 @@
+NAME
+	update - invalid a program for cloning
+
+SYNTAX
+	int update(string);
+
+DESCRIPTION
+	Invalid a program for cloning. Return 0 if no such program was loaded.
+	Next time a clone is attempted on that program it will be reloaded
+	from disk.
+
+NOTA BENE
+	Even though there is a new program in memory, the old clones will
+	continue to use the old program, therefor the memory associated
+	with the old program can not be freed until all clones from it
+	are destructed.
+
+SEE ALSO
+	load

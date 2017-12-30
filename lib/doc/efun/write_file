@@ -1,0 +1,8 @@
+write_file
+
+int write_file(string file, string str)
+
+Append the string str into the file file. Returns 0 or 1 for failure or 
+success.
+
+See also: file_size, cat, log_file, read_file.

@@ -1,0 +1,15 @@
+NAME
+	db_flush - flush all database caches
+
+SYNTAX
+	void db_flush();
+
+DESCRIPTION
+	This function will flush all the caches used by the database functions.
+	Normally you won't have to use this function, but if you intend to do
+	normal file-access (not with the db_* functions) on databases, you
+	must run this function first. The one exception is rm(), rm always
+	runs this function.
+
+SEE ALSO
+	db_set, db_get, db_indices, rm

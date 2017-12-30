@@ -1,0 +1,16 @@
+NAME
+	sum_mappings - summarize two mappings into one
+
+SYNTAX
+	mapping sum_mappigs(mapping a,mapping b,function A,function AB,
+		function B);
+
+DESCRIPTION
+	Returns a mapping built like this: for every index that is present
+	in a but not b, set this index to the value of A(a[index]) and for
+	all indexes that are present in b but not a B(b[index]) and all
+	that are present in both are set to AB(a[index],b[index]) If given
+	an integer instead of one of the functions, 0 is assumed.
+
+SEE ALSO
+	map_mapping, sum_arrays, map_array
